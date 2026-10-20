@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="330" viewBox="0 0 360 330"><title>Pocket Pal mascot</title><g transform="translate(180 196) scale(1.25)">
+    <ellipse cx="0" cy="91" rx="81" ry="12" fill="#263d31" opacity=".09"/>
+    <path d="M-63 42q-46 -9 -31 -36q9 -10 27 14" fill="#84d4ae" stroke="#316b50" stroke-width="3"/>
+    <path d="M67 32q45 -25 33 -48q-14 -10 -32 24" fill="#84d4ae" stroke="#316b50" stroke-width="3"/>
+    <path d="M-41 68q-18 36 -40 16q-8 -14 19 -30m85 14q14 35 39 17q12 -13 -16 -32" fill="#64bc96" stroke="#316b50" stroke-width="3"/>
+    <path d="M-87 5C-85 -65 -58 -91 -7 -88C46 -98 80 -58 83 6C92 64 59 82 -5 81C-67 85 -95 61 -87 5Z" fill="#97dfb8" stroke="#316b50" stroke-width="3.5"/>
+    <path d="M-68 -25q10 -43 51 -43" fill="none" stroke="#c9f3d8" stroke-width="10" stroke-linecap="round"/>
+    <ellipse cx="-7" cy="46" rx="40" ry="24" fill="#b8edca"/>
+    <path d="M-5 -86q-9 -36 5 -48" fill="none" stroke="#316b50" stroke-width="5" stroke-linecap="round"/>
+    <path d="M-4 -105q-35 -3 -33 -30q34 -4 33 30" fill="#58a46f" stroke="#316b50" stroke-width="3"/>
+    <path d="M-2 -115q-2 -30 32 -34q7 28 -32 34" fill="#8fc86c" stroke="#316b50" stroke-width="3"/>
+    <ellipse cx="-49" cy="17" rx="12" ry="7" fill="#ed9e91" opacity=".8"/><ellipse cx="36" cy="17" rx="12" ry="7" fill="#ed9e91" opacity=".8"/>
+    <ellipse cx="-29" cy="-1" rx="6" ry="9" fill="#243e35"/><ellipse cx="14" cy="-1" rx="6" ry="9" fill="#243e35"/><path d="M-20 21q13 17 26 0" fill="none" stroke="#243e35" stroke-width="5" stroke-linecap="round"/>
+    
+  </g></svg>

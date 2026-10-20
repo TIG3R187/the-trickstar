@@ -1,0 +1,96 @@
+import { chromium } from 'playwright';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import { pathToFileURL } from 'node:url';
+import path from 'node:path';
+import { existsSync } from 'node:fs';
+
+const launch = { headless: true };
+if (process.env.POCKET_PAL_BROWSER) launch.executablePath = process.env.POCKET_PAL_BROWSER;
+else if (!existsSync(chromium.executablePath()) && process.platform === 'win32') {
+  const edge = path.join(process.env['ProgramFiles(x86)'] || 'C:/Program Files (x86)', 'Microsoft/Edge/Application/msedge.exe');
+  if (existsSync(edge)) launch.executablePath = edge;
+}
+const browser = await chromium.launch(launch);
+const context = await browser.newContext({ viewport: { width: 1440, height: 1050 }, reducedMotion: 'reduce', acceptDownloads: true });
+const page = await context.newPage();
+const errors = [];
+page.on('pageerror', error => errors.push(error.message));
+const guideUrl = pathToFileURL(path.resolve('README.html')).href;
+const stat = key => page.locator(`#stat-${key}`).innerText().then(Number);
+await fs.mkdir('artifacts', { recursive: true });
+try {
+  await page.goto(guideUrl);
+  await page.evaluate(() => localStorage.clear());
+  await page.reload();
+  await page.locator('#mission-setup').waitFor();
+  assert.equal(await page.locator('.mission').count(), 10);
+  await page.locator('#feed').click(); await page.locator('#play').click();
+  assert.deepEqual(await Promise.all(['hunger', 'happiness', 'energy'].map(stat)), [15, 85, 60]);
+  await page.locator('#sleep').click();
+  assert(await page.locator('#feed').isDisabled()); assert(await page.locator('#play').isDisabled());
+  await page.locator('#tick').click();
+  assert.deepEqual(await Promise.all(['hunger', 'happiness', 'energy'].map(stat)), [17, 85, 70]);
+  await page.locator('#reset-demo').click();
+  for (let i = 0; i < 8; i++) await page.locator('#tick').click();
+  assert.equal(await page.locator('#pet-mood').innerText(), 'Feeling hungry');
+  assert((await page.locator('#pet-art').getAttribute('src')).includes('hungry'));
+  for (let i = 0; i < 100; i++) await page.locator('#tick').evaluate(el => el.click());
+  assert.deepEqual(await Promise.all(['hunger', 'happiness', 'energy'].map(stat)), [100, 0, 0]);
+  assert(await page.locator('#play').isDisabled());
+  await page.locator('#sleep').click();
+  for (let i = 0; i < 12; i++) await page.locator('#tick').evaluate(el => el.click());
+  assert.equal(await stat('energy'), 100);
+  assert.equal(await page.locator('#pet-mood').innerText(), 'Shh… sleeping');
+  await page.locator('#reset-demo').click();
+  await page.locator('#feed').click(); await page.locator('#feed').click();
+  assert.equal(await stat('hunger'), 0); assert(await page.locator('#feed').isDisabled());
+  await page.locator('#complete-setup').check();
+  await page.locator('#acceptance-0').check();
+  await page.reload();
+  assert(await page.locator('#complete-setup').isChecked()); assert(await page.locator('#acceptance-0').isChecked());
+  assert.equal(await page.locator('#progress-percent').innerText(), '10%');
+  await page.locator('#expand-all').click();
+  assert.equal(await page.locator('.mission[open]').count(), 10);
+  await page.locator('#expand-all').click();
+  assert.equal(await page.locator('.mission[open]').count(), 0);
+  await page.locator('#mission-setup summary').focus(); await page.keyboard.press('Enter');
+  assert(await page.locator('#mission-setup').getAttribute('open') !== null);
+  await page.locator('[data-copy="setup"]').click();
+  assert(await page.locator('#toast').isVisible());
+  const downloadPromise = page.waitForEvent('download');
+  await page.locator('#export-progress').click();
+  const download = await downloadPromise;
+  const file = path.resolve('artifacts/progress.md'); await download.saveAs(file);
+  const exported = await fs.readFile(file, 'utf8'); assert(exported.includes('- [x] Get your launchpad ready'));
+  page.once('dialog', dialog => dialog.dismiss()); await page.locator('#clear-progress').click();
+  assert.equal(await page.locator('#progress-percent').innerText(), '10%');
+  page.once('dialog', dialog => dialog.accept()); await page.locator('#clear-progress').click();
+  assert.equal(await page.locator('#progress-percent').innerText(), '0%');
+  await page.evaluate(() => localStorage.setItem('pocket-pal-quadri-guide-v1', '{broken'));
+  await page.reload(); assert(await page.locator('#storage-note').innerText().then(t => t.includes('could not be read')));
+  await page.locator('#complete-setup').check();
+  assert.equal(await page.locator('#progress-percent').innerText(), '10%');
+  // Also exercise the explicit no-storage fallback.
+  const blocked = await browser.newContext();
+  await blocked.addInitScript(() => { Object.defineProperty(window, 'localStorage', { get() { throw new Error('Storage blocked'); } }); });
+  const blockedPage = await blocked.newPage(); await blockedPage.goto(guideUrl);
+  await blockedPage.locator('#complete-setup').check();
+  assert.equal(await blockedPage.locator('#progress-percent').innerText(), '10%');
+  assert((await blockedPage.locator('#storage-note').innerText()).includes('unavailable'));
+  await blocked.close();
+  await page.evaluate(() => localStorage.clear()); await page.reload();
+  for (const width of [375, 768, 1280, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
+    assert(!overflow, `Layout overflow at ${width}px`);
+    const brokenImages = await page.locator('img').evaluateAll(imgs => imgs.filter(img => img.complete && img.naturalWidth === 0).map(img => img.src));
+    assert.deepEqual(brokenImages, []);
+    if (width === 375 || width === 1440) {
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.screenshot({ path: `artifacts/guide-${width}.png`, fullPage: true });
+    }
+  }
+  assert.deepEqual(errors, []);
+  console.log('Passed: pet rules and limits, sleep restrictions, mood artwork, saved progress, expand/collapse, keyboard use, copy, export, reset, corrupt/blocked storage, 4 responsive widths and no runtime errors.');
+} finally { await browser.close(); }
