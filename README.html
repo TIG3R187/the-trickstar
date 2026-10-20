@@ -17,26 +17,26 @@
     <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 md:px-10">
       <a href="#" class="flex items-center gap-3 brand" aria-label="Pocket Pal home"><img src="assets/pocket-pal-icon.svg" alt="" width="42" height="42"><span>Pocket Pal<span class="brand-sub">THE JUNIOR BUILD SERIES / 01</span></span></a>
       <nav class="hidden items-center gap-7 text-sm font-semibold md:flex" aria-label="Main navigation"><a href="#missions">The missions</a><a href="#rules">Game rules</a><a href="#launch">The finish line</a></nav>
-      <a class="small-button" href="assignment.md" download>↓ <span class="hidden sm:inline">Download </span>brief</a>
+      <div class="flex items-center gap-2"><button class="small-button motion-toggle" id="motion-toggle" aria-pressed="false" aria-label="Pause animation">Ⅱ <span class="hidden sm:inline">Pause animation</span></button><a class="small-button" href="assignment.md" download>↓ <span class="hidden sm:inline">Download </span>brief</a></div>
     </div>
   </header>
 
   <main id="main" class="mx-auto max-w-7xl px-5 md:px-10">
     <section class="hero grid items-center gap-9 py-12 lg:grid-cols-2 lg:gap-14 lg:py-20" aria-labelledby="hero-title">
       <div>
-        <p class="eyebrow"><span class="status-dot"></span> A NEW QUEST FOR QUADRI</p>
+        <p class="eyebrow"><span class="status-dot"></span> PLAYER QUADRI / QUEST 001</p>
         <h1 id="hero-title">A little pet.<br>A big <span class="hand-drawn">first build.</span></h1>
-        <p class="hero-copy">Hey Quadri, your next adventure has a tiny heartbeat. Build a virtual friend, give it a world, and ship your own Flutter game.</p>
+        <p class="hero-copy">Hey Quadri, meet your first little world. A hungry friend. A handful of widgets. A game that only exists because you built it.</p>
         <div class="mt-7 flex flex-wrap gap-3"><a class="button primary" href="#missions">Start your adventure <span aria-hidden="true">↗</span></a><a class="button secondary" href="#playground">Meet your pal <span aria-hidden="true">↓</span></a></div>
-        <div class="hero-meta mt-7 flex flex-wrap gap-5 text-sm"><span><strong>14</strong> days</span><span><strong>10</strong> missions</span><span><strong>1</strong> live game</span></div>
+        <div class="hero-meta mt-7 flex flex-wrap gap-5 text-sm"><span><strong>14</strong> days</span><span><strong>10</strong> missions</span><span><strong>1</strong> live game</span></div><p class="hero-footnote">Your pal is awake. Try feeding or playing →</p>
       </div>
       <div id="playground" class="pet-card" aria-labelledby="playground-title">
         <div class="flex items-center justify-between gap-2 px-6 pt-5"><span class="eyebrow !mb-0" id="playground-title">MEET SPROUT</span><span class="demo-label">RULES PLAYGROUND</span></div>
         <div class="habitat">
           <span class="cloud cloud-one" aria-hidden="true"></span><span class="cloud cloud-two" aria-hidden="true"></span><span class="sparkle" aria-hidden="true">✧</span>
-          <div class="mood-pill" id="pet-mood">Feeling happy</div>
+          <div class="mood-pill" id="pet-mood">Feeling happy</div><div class="pet-reaction" id="pet-reaction" aria-hidden="true"></div>
           <img id="pet-art" src="assets/pal.svg" alt="Sprout, a happy mint creature" width="360" height="330">
-          <span class="pet-prop" id="pet-prop" aria-hidden="true"></span>
+          <span class="pet-prop" id="pet-prop" aria-hidden="true"></span><span class="garden-flower flower-one" aria-hidden="true">✿</span><span class="garden-flower flower-two" aria-hidden="true">✿</span>
           <div class="ground" aria-hidden="true"></div>
         </div>
         <div class="pet-controls">
@@ -51,17 +51,19 @@
 
     <div class="journey-strip grid gap-5 sm:grid-cols-3"><div><span>01 / CREATE</span><p>Give a tiny friend a name.</p></div><div><span>02 / CARE</span><p>Turn Dart logic into life.</p></div><div><span>03 / SHIP</span><p>Share a game you built.</p></div></div>
 
+    <section class="concept-preview" aria-label="Your game concept"><img src="assets/quest-banner.gif" data-motion-src="assets/quest-banner.gif" data-static-src="assets/quest-banner-poster.png" width="960" height="420" alt="Animated concept: Pocket Pal jumps, asks for a snack, plays and dreams inside a game console"><div><span class="eyebrow">A PREVIEW OF THE POSSIBILITIES</span><p>A little care. A little code.<br>A whole lot of personality.</p><span>This original animation is your inspiration. The Flutter version is your mission.</span></div></section>
+
     <section class="section-space" id="goal" aria-labelledby="goal-title">
       <div class="grid gap-8 lg:grid-cols-[.8fr_1.2fr]"><div><p class="eyebrow">YOUR NORTH STAR</p><h2 id="goal-title">Small enough to finish.<br>Yours enough to be proud of.</h2></div><div class="prose-copy"><p id="goal-copy"></p><p class="mt-4"><strong>At the finish line:</strong> <span id="outcome-copy"></span></p><p class="mt-4 text-sm" id="scope-copy"></p><p class="mt-4 text-sm"><strong>Your toolkit:</strong> <span id="tools-copy"></span></p></div></div>
     </section>
 
     <section class="section-space border-t border-stone-200" id="missions" aria-labelledby="missions-title">
-      <div class="mb-8 flex flex-wrap items-end justify-between gap-5"><div><p class="eyebrow">THE BUILD PATH</p><h2 id="missions-title">Ten missions. One new skill at a time.</h2><p class="section-intro">Open a mission, build it, check it. Mark it done when the evidence is there.</p></div><button class="small-button" id="expand-all">Expand all missions</button></div>
+      <div class="mb-8 flex flex-wrap items-end justify-between gap-5"><div><p class="eyebrow">THE BUILD PATH</p><h2 id="missions-title">Ten missions. One new skill at a time.</h2><p class="section-intro">Open a mission, build it, check it. Mark it done when the evidence is there.</p></div><button class="small-button" id="expand-all">Expand all missions</button></div><div id="quest-map" class="quest-map" aria-label="Jump to a mission"></div>
       <div class="grid items-start gap-7 lg:grid-cols-[280px_1fr]">
         <aside class="progress-panel lg:sticky lg:top-24" aria-label="Your saved progress">
           <div class="flex items-center justify-between"><span class="eyebrow !mb-0">QUADRI’S PROGRESS</span><span class="progress-number" id="progress-percent">0%</span></div>
           <div class="progress-track mt-5" id="mission-progress" role="progressbar" aria-label="Missions complete" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0"><span id="progress-fill"></span></div>
-          <p class="mt-3 text-sm" id="progress-text" aria-live="polite">0 of 10 missions complete</p>
+          <p class="mt-3 text-sm" id="progress-text" aria-live="polite">0 of 10 missions complete</p><div class="xp-badge"><span aria-hidden="true">✦</span><span id="progress-xp">0 XP</span><span id="progress-rank">New adventurer</span></div>
           <p class="mt-5 text-sm leading-relaxed text-stone-600">Your suggested route is 14 days from your agreed start date. Set the deadline with your mentor.</p>
           <div class="daily-note mt-5"><span aria-hidden="true">✎</span><p><strong>Your daily check-in</strong><br>What worked? What’s next?<br>Where are you stuck?</p></div>
           <p class="mt-5 text-xs leading-relaxed text-stone-600" id="storage-note">Mission and checklist progress is saved in this browser only. The demo pet resets on reload.</p>

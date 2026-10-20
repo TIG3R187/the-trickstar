@@ -16,11 +16,12 @@ const context = await browser.newContext({ viewport: { width: 1440, height: 1050
 const page = await context.newPage();
 const errors = [];
 page.on('pageerror', error => errors.push(error.message));
-const guideUrl = pathToFileURL(path.resolve('README.html')).href;
+const guideUrl = pathToFileURL(path.resolve('index.html')).href;
 const stat = key => page.locator(`#stat-${key}`).innerText().then(Number);
 await fs.mkdir('artifacts', { recursive: true });
 try {
   await page.goto(guideUrl);
+  assert(page.url().endsWith('/README.html'), 'Root entry must open the guide');
   await page.evaluate(() => localStorage.clear());
   await page.reload();
   await page.locator('#mission-setup').waitFor();
@@ -50,6 +51,10 @@ try {
   await page.reload();
   assert(await page.locator('#complete-setup').isChecked()); assert(await page.locator('#acceptance-0').isChecked());
   assert.equal(await page.locator('#progress-percent').innerText(), '10%');
+  assert.equal(await page.locator('#progress-xp').innerText(), '100 XP');
+  await page.locator('#map-ship').click();
+  assert.equal(await page.locator('#mission-ship').getAttribute('open'), '');
+  assert.equal(await page.locator('#mission-ship summary').evaluate(el => document.activeElement === el), true);
   await page.locator('#expand-all').click();
   assert.equal(await page.locator('.mission[open]').count(), 10);
   await page.locator('#expand-all').click();
@@ -89,8 +94,29 @@ try {
     if (width === 375 || width === 1440) {
       await page.evaluate(() => window.scrollTo(0, 0));
       await page.screenshot({ path: `artifacts/guide-${width}.png`, fullPage: true });
+      await page.screenshot({ path: `artifacts/hero-${width}.png`, fullPage: false });
     }
   }
+  // Test real motion independently of the reduced-motion functional checks.
+  const lively = await browser.newContext({ viewport: { width: 1440, height: 1050 }, reducedMotion: 'no-preference' });
+  const animated = await lively.newPage(); await animated.goto(guideUrl);
+  await animated.locator('#pet-art').waitFor();
+  assert.equal(await animated.locator('#pet-art').evaluate(el => getComputedStyle(el).animationName), 'pal-bob');
+  assert.equal(await animated.locator('#motion-toggle').getAttribute('aria-pressed'), 'false');
+  const frame1 = await animated.locator('.concept-preview>img').screenshot();
+  await animated.waitForTimeout(650);
+  const frame2 = await animated.locator('.concept-preview>img').screenshot();
+  assert(!frame1.equals(frame2), 'The concept GIF must visibly animate');
+  await animated.locator('#play').click();
+  assert.equal(await animated.locator('#pet-reaction').innerText(), '✦ LET’S GO!');
+  await animated.locator('#motion-toggle').click();
+  assert.equal(await animated.locator('#pet-art').evaluate(el => getComputedStyle(el).animationPlayState), 'paused');
+  assert((await animated.locator('.concept-preview>img').getAttribute('src')).endsWith('-poster.png'));
+  await animated.locator('#motion-toggle').click();
+  assert((await animated.locator('.concept-preview>img').getAttribute('src')).endsWith('.gif'));
+  await lively.close();
+  await page.goto(pathToFileURL(path.resolve('dist/index.html')).href);
+  assert.equal(await page.locator('.mission').count(), 10, 'Packaged guide must work at a nested base path');
   assert.deepEqual(errors, []);
-  console.log('Passed: pet rules and limits, sleep restrictions, mood artwork, saved progress, expand/collapse, keyboard use, copy, export, reset, corrupt/blocked storage, 4 responsive widths and no runtime errors.');
+  console.log('Passed: root launch, pet rules, mission map, XP, saved progress, keyboard use, export/reset, storage recovery, 4 viewport widths, visible GIF/CSS motion, pause/resume and packaged nested paths.');
 } finally { await browser.close(); }

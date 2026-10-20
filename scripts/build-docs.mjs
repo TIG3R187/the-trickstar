@@ -1,22 +1,255 @@
-const q = String.fromCharCode(96); const fence = q.repeat(3);
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
 
 const sandbox = {};
 vm.runInNewContext(await fs.readFile('guide/content.js', 'utf8'), sandbox);
 const c = sandbox.POCKET_PAL;
+const tick = String.fromCharCode(96);
+const inline = value => tick + value + tick;
+const fenced = (value, language = 'sh') => `${tick.repeat(3)}${language}\n${value}\n${tick.repeat(3)}`;
 const bullets = xs => xs.map(x => `- ${x}`).join('\n');
 const checks = xs => xs.map(x => `- [ ] ${x}`).join('\n');
-const goal = `## The goal\n\n${c.student}, ${c.goal.charAt(0).toLowerCase() + c.goal.slice(1)}\n\n**What you will achieve:** ${c.outcome}\n\n**Suggested duration:** 14 days from your agreed start date. Agree the calendar deadline with your mentor.\n\n**Tools:** ${c.tools}\n\n**Scope:** ${c.scope}\n\nThe Tailwind HTML page is a reference guide and rules playground. Your submitted game must be written in Flutter and Dart. You are responsible for building it; this pack does not include the finished Flutter solution.\n`;
-const rules = `## Game rules\n\n| Rule | Required behaviour |\n| --- | --- |\n${c.rules.map(r => `| **${r[0]}** | ${r[1]} |`).join('\n')}\n\n**Worked check:** starting at 30 / 70 / 70 (hunger / happiness / energy), Feed gives 10 / 70 / 70; Play then gives 15 / 85 / 60. Sleep changes only the sleeping flag. The next sleeping tick gives 17 / 85 / 70.\n`;
-const missionBody = m => `**What to do:** ${m.what}\n\n**How to do it:**\n\n${m.how.map((x, i) => `${i + 1}. ${x}`).join('\n')}\n${m.code ? `\n${fence}${m.id === 'model' ? 'dart' : 'sh'}\n${m.code}\n${fence}\n\n${m.id === 'setup' ? 'Run from the assignment root. After `cd app`, stay in `app/` for Flutter commands.' : m.id === 'save' ? 'Run from the assignment root; skip `cd app` if you are already there.' : m.id === 'model' ? 'Write this helper in your Dart code; it is not a terminal command.' : 'Run these commands inside `app/`.'}\n` : ''}\n**Done when:**\n\n${checks(m.done)}\n\n**Hint:** ${m.hint}\n`;
-const schedule = `## Your 14-day route\n\n| When | Mission | Skill |\n| --- | --- | --- |\n${c.missions.map((m, i) => `| ${m.day} | ${String(i + 1).padStart(2, '0')}. ${m.title} | ${m.skill} |`).join('\n')}\n`;
-const acceptance = `## Definition of done\n\n${checks(c.acceptance)}\n`;
-const rubric = `## How your work will be reviewed\n\n| Area | Points | What your mentor will look for |\n| --- | ---: | --- |\n${c.rubric.map(r => `| ${r[0]} | ${r[1]} | ${r[2]} |`).join('\n')}\n| **Total** | **100** | Core requirements come first. Bonus features do not replace them. |\n\nBe ready to explain your own code. Documentation, tutorials and AI assistance are allowed as learning aids; keep a short note of what you used and verify every change. Your mentor may ask you to change a rule live.\n`;
-const delivery = `## What to submit\n\n${bullets(c.deliverables)}\n\n**Daily check-in:** tell your mentor what you completed, what you will do next, and one blocker or question. Commit when a meaningful piece works.\n\n**Bonus, after the core works:** add one small animation, a muteable sound effect, an accessory unlock, or an Android APK. Explain any extra permissions or packages you choose.\n`;
-const resources = `## Official learning resources\n\n${c.resources.map(r => `- [${r[0]}](${r[1]})`).join('\n')}\n`;
-const assignment = `# Pocket Pal — Quadri’s Flutter assignment\n\n<img src="assets/pocket-pal-icon.png" width="112" alt="Pocket Pal: a mint creature with a leaf on its head">\n\n**Assigned to:** Quadri · **Level:** about one month of Flutter/Dart · **Deliverable:** a deployed virtual pet game\n\n[Visual README](README.md) · [Interactive Tailwind guide](README.html)\n\n${goal}\n${rules}\n${schedule}\n## Step-by-step assignment\n\n${c.missions.map((m, i) => `### ${String(i + 1).padStart(2, '0')}. ${m.title} — ${m.day}\n\n${missionBody(m)}`).join('\n')}\n${acceptance}\n${delivery}\n${rubric}\n${resources}\n---\n\nThis is an assignment brief, not a claim that the game is already built or deployed. The local HTML playground illustrates the rules. Original icon and GIF assets are included for this assignment; see [asset notes](assets/README.md).\n`;
-const readme = `<div align="center">\n\n<img src="assets/pocket-pal-icon.png" width="100" alt="Pocket Pal game icon">\n\n# A little pet. A big first build.\n\n**Pocket Pal · Quadri’s Flutter adventure**\n\n14 days · 10 missions · Flutter + Dart · One live game\n\n[Start the interactive guide](README.html) · [Read the full assignment](assignment.md) · [Jump to your missions](#your-missions)\n\n<img src="assets/pal-hello.gif" width="640" alt="Illustrated concept: a mint Pocket Pal bounces, blinks and waves hello to Quadri">\n\n*A concept animation to inspire your build. Your Flutter app is the assignment.*\n\n</div>\n\n> **Welcome, Quadri.** Your mission is to bring a tiny creature to life, care for it, and put your own Flutter game on the internet. Build one small, working piece at a time.\n\n## Open your interactive README\n\nOpen [README.html](README.html) in your browser for a working rules playground, saved mission checkboxes, an automatically updated progress bar, command copy buttons and a submission checklist. The compiled Tailwind CSS and GIFs are local, so no internet or installation is needed to read it.\n\nOn GitHub, download or clone this repository before opening the HTML file, or run the optional local preview below. GitHub renders HTML files as source.\n\nThe Markdown README uses expandable sections, navigation links, GIFs and editable task lists. GitHub does not execute custom JavaScript or Tailwind CSS inside Markdown; the companion HTML supplies those interactions. Checkbox edits in Markdown are separate from progress saved by the HTML guide.\n\n${goal}\n## See the care loop\n\n<img src="assets/care-loop.gif" width="640" alt="Concept animation cycling through feed, play and sleep expressions">\n\n**Adopt → care → watch needs change → save → come back.** The exact numbers below define the required game. The animations illustrate the idea; they are not recordings of a finished Flutter implementation.\n\n<details>\n<summary><strong>Open the game rules and worked example</strong></summary>\n\n${rules}\n</details>\n\n${schedule}\n## Your missions\n\nExpand a mission to find the task, method and completion checks. Follow them in order.\n\n${c.missions.map((m, i) => `<details${i === 0 ? ' open' : ''}>\n<summary><strong>${String(i + 1).padStart(2, '0')} · ${m.title}</strong> — ${m.day}</summary>\n\n${missionBody(m)}\n</details>\n`).join('\n')}\n${acceptance}\n${delivery}\n<details>\n<summary><strong>How your mentor will score the project — 100 points</strong></summary>\n\n${rubric}\n</details>\n\n## Where your work goes\n\n${fence}text\npocket-pal-assignment/\n├── assignment.md        # Complete specification\n├── README.md            # This visual introduction\n├── README.html          # Interactive Tailwind guide\n├── assets/              # Original icon, PNG and looping GIFs\n├── guide/               # Guide content, styles and interaction code\n├── scripts/             # Documentation and asset build tools\n└── app/                 # Quadri creates this Flutter project in mission 01\n    ├── lib/\n    ├── test/\n    ├── README.md        # Quadri writes the game documentation here\n    └── TESTING.md       # Quadri records checks here\n${fence}\n\nThe suggested Flutter structure is ${q}lib/models/pet.dart${q}, ${q}lib/screens/${q}, ${q}lib/widgets/${q}, and ${q}lib/services/pet_storage.dart${q}. Keep it simple; you do not need a complex architecture. The guide’s npm tools are separate from the game’s Flutter tools.\n\n<details>\n<summary><strong>Optional: preview, rebuild or customise this guide</strong></summary>\n\nNo setup is required to open README.html. To serve it locally, install Node.js and run from the assignment root:\n\n${fence}sh\nnpm run preview\n${fence}\n\nOpen the printed local address. To edit the guide tooling or regenerate assets:\n\n${fence}sh\nnpm ci\nnpm run assets\nnpm run build\nnpm run check\n${fence}\n\nEdit ${q}guide/content.js${q} to change the brief, then run ${q}npm run build${q} to regenerate assignment.md, README.md and compiled Tailwind CSS. Edit README.html and guide/app.js for the interactive layout and behaviour. Generated Markdown task edits will be overwritten on the next build.\n\n${q}npm run test:browser${q} runs interaction and layout checks using Playwright. Install its Chromium browser first with ${q}npx playwright install chromium${q}, or set ${q}POCKET_PAL_BROWSER${q} to a Chromium-based browser executable. These checks validate the assignment guide; Quadri must write and run tests for the Flutter game separately.\n\n</details>\n\n${resources}\n---\n\n**Your finish line, Quadri:** a live game you built, a pet that remembers its owner, and code you can explain.\n\nOriginal vector icon, PNG and GIFs are supplied in [assets/](assets/README.md). Optional extensions can wait until all required checks pass.\n`;
+const repo = 'https://github.com/TIG3R187/the-trickstar';
+const hostedGuide = 'https://tig3r187.github.io/the-trickstar/';
+const offlinePack = `${repo}/raw/refs/heads/main/Pocket-Pal-Quadri-Assignment.zip`;
+
+const goal = `## The goal
+
+${c.student}, ${c.goal.charAt(0).toLowerCase() + c.goal.slice(1)}
+
+**What you will achieve:** ${c.outcome}
+
+**Suggested duration:** 14 days from your agreed start date. Agree the calendar deadline with your mentor.
+
+**Tools:** ${c.tools}
+
+**Scope:** ${c.scope}
+
+The Tailwind HTML guide is a reference and rules playground. Your submitted game must be written in Flutter and Dart, inside ${inline('app/')}. This pack gives you a route to follow; you create the Flutter implementation.
+`;
+
+const rules = `## Game rules
+
+| Rule | Required behaviour |
+| --- | --- |
+${c.rules.map(r => `| **${r[0]}** | ${r[1]} |`).join('\n')}
+
+**Worked check:** starting at 30 / 70 / 70 (hunger / happiness / energy), Feed gives 10 / 70 / 70; Play then gives 15 / 85 / 60. Sleep changes only the sleeping flag. The next sleeping tick gives 17 / 85 / 70.
+`;
+
+function missionBody(m) {
+  const note = m.id === 'setup' ? 'Run from the assignment root. After cd app, stay in app/ for Flutter commands.'
+    : m.id === 'save' ? 'Run from the root; skip cd app if already inside app/.'
+    : m.id === 'model' ? 'Write this helper in your Dart code; it is not a terminal command.' : 'Run inside app/.';
+  return `**Your task:** ${m.what}
+
+**Your route:**
+
+${m.how.map((x, i) => `${i + 1}. ${x}`).join('\n')}
+${m.code ? '\n' + fenced(m.code, m.id === 'model' ? 'dart' : 'sh') + '\n\n' + note + '\n' : ''}
+**Mission cleared when:**
+
+${checks(m.done)}
+
+> **Field note:** ${m.hint}
+`;
+}
+
+const schedule = `## Your 14-day route
+
+| When | Mission | Skill unlocked |
+| --- | --- | --- |
+${c.missions.map((m, i) => `| ${m.day} | ${String(i + 1).padStart(2, '0')}. ${m.title} | ${m.skill} |`).join('\n')}
+`;
+
+const acceptance = `## Definition of done
+
+${checks(c.acceptance)}
+`;
+
+const rubric = `## How your work will be reviewed
+
+| Area | Points | What your mentor will look for |
+| --- | ---: | --- |
+${c.rubric.map(r => `| ${r[0]} | ${r[1]} | ${r[2]} |`).join('\n')}
+| **Total** | **100** | Core requirements come first. Bonus features do not replace them. |
+
+Be ready to explain your code. Documentation, tutorials and AI assistance are allowed as learning aids; keep a short note of what you used and verify every change. Your mentor may ask you to change a rule live.
+`;
+
+const delivery = `## What to submit
+
+${bullets(c.deliverables)}
+
+**Daily check-in:** tell your mentor what you completed, what you will do next, and one blocker or question. Commit when a meaningful piece works.
+
+**Bonus, after the core works:** add one small animation, a muteable sound effect, an accessory unlock, or an Android APK. Explain any extra permissions or packages you choose.
+`;
+
+const resources = `## Official learning resources
+
+${c.resources.map(r => `- [${r[0]}](${r[1]})`).join('\n')}
+`;
+
+const assignment = `# Pocket Pal — Quadri’s Flutter assignment
+
+<img src="assets/pocket-pal-icon.png" width="112" alt="Pocket Pal: a mint creature with a leafy sprout">
+
+**Assigned to:** Quadri · **Level:** about one month of Flutter/Dart · **Deliverable:** a deployed virtual pet game
+
+[Quest hub](README.md) · [How to launch the interactive guide](README.md#launch-the-interactive-guide)
+
+${goal}
+${rules}
+${schedule}
+## Step-by-step assignment
+
+${c.missions.map((m, i) => `### ${String(i + 1).padStart(2, '0')}. ${m.title} — ${m.day}\n\n${missionBody(m)}`).join('\n')}
+${acceptance}
+${delivery}
+${rubric}
+${resources}
+---
+
+The HTML demo and original animations illustrate the experience you will build. See [asset notes](assets/README.md) for reusable artwork. To open the interactive guide, use [the launch instructions](README.md#launch-the-interactive-guide); GitHub’s file viewer displays HTML source code.
+`;
+
+const folderTree = `pocket-pal-assignment/
+├── assignment.md        # Complete game specification
+├── README.md            # This animated quest hub
+├── index.html           # Browser / GitHub Pages entry
+├── README.html          # Interactive Tailwind guide
+├── assets/              # Original icon, animation and artwork
+├── guide/               # Guide content, styles and interactions
+├── .github/workflows/   # GitHub Pages deployment
+├── scripts/             # Build, preview and validation tools
+└── app/                 # Quadri creates this in mission 01
+    ├── lib/
+    ├── test/
+    ├── README.md        # Document the Flutter game here
+    └── TESTING.md       # Record real test results here`;
+
+const readme = `<p align="center">
+  <img src="assets/quest-banner.gif" width="960" alt="Animated Pocket Pal quest banner: a leafy creature jumps, asks for a snack, plays and falls asleep inside a little game console">
+</p>
+
+<h1 align="center">Your first world starts with one tiny friend.</h1>
+
+<p align="center"><strong>QUADRI’S FLUTTER QUEST</strong> · 14 days · 10 missions · One game on the internet</p>
+
+<p align="center">
+  <a href="#launch-the-interactive-guide"><img src="assets/button-launch.svg" width="220" alt="Start your quest — launch options"></a>
+  <a href="assignment.md"><img src="assets/button-brief.svg" width="250" alt="Read the full assignment"></a>
+  <a href="${offlinePack}"><img src="assets/button-download.svg" width="250" alt="Download the offline assignment ZIP"></a>
+</p>
+
+> **Hey Quadri. Meet Sprout.** A tiny creature with a big appetite, a short attention span and absolutely no idea what a widget is. Your job? Build its world with Flutter, keep it happy, and send your mentor a link that works.
+
+| Player | Your toolkit | Your finish line |
+| :--- | :--- | :--- |
+| **Quadri** · junior Flutter developer | Flutter, Dart, local storage and Git | Adopt → feed → play → sleep → refresh → same pet |
+
+## Launch the interactive guide
+
+**Choose a launch route below.** This README is the animated GitHub edition. The interactive guide runs in a browser, where the pet reacts to your clicks and your mission progress is saved.
+
+### Play locally now — no install needed
+
+1. [Download the offline pack](${offlinePack}), or use **Code → Download ZIP** above.
+2. **Extract the entire ZIP.** Keep the assets and guide folders beside the HTML files.
+3. Double-click **index.html** in the extracted folder. It opens the guide in your browser.
+
+If you already have this repository locally, open **index.html** from File Explorer, or run:
+
+${fenced('npm run preview')}
+
+Then open **[http://127.0.0.1:4173](http://127.0.0.1:4173)**. The preview uses Node.js built-ins; npm install is unnecessary for this command.
+
+### Give Quadri a hosted launch link
+
+The repository includes a GitHub Pages workflow. The owner needs to enable Pages once:
+
+1. Push this updated pack to the repository’s **main** branch.
+2. Open **[Settings → Pages](${repo}/settings/pages)**. Under **Build and deployment → Source**, choose **GitHub Actions**.
+3. Open **[Actions → Publish Pocket Pal guide](${repo}/actions/workflows/deploy-guide.yml)** and run the workflow. Wait for the deployment job to turn green.
+
+**After deployment, the browser launch address is [${hostedGuide}](${hostedGuide}).** This is the expected Pages address, not a claim that hosting has already been enabled. Use the local route immediately while publishing is pending.
+
+GitHub’s ${inline('/blob/main/README.html')} URL shows source code. Use the Pages address or an extracted local HTML file to run the guide. [GitHub Pages setup reference](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+
+---
+
+## What you’re bringing to life
+
+<p align="center"><img src="assets/care-loop.gif" width="640" alt="Animated concept showing Sprout getting hungry, playing happily and sleeping"></p>
+
+| Give it a home | Give it a personality | Give it a memory |
+| :--- | :--- | :--- |
+| Pick a style. Choose a name. Make it yours. | Feed it, play with it and watch its mood change. | Save its state. Refresh the page. Find your friend waiting. |
+
+The GIFs are original concept animations. The interactive guide is a working rules playground. **The Flutter game is yours to build.**
+
+${goal}
+<p align="center"><img src="assets/quest-route.gif" width="960" alt="Animated route from adoption to care, saving and shipping"></p>
+
+${schedule}
+## Your missions
+
+Click a mission to open its route, commands, field notes and completion checks. In the browser guide, you can tick off missions, earn progress and export your checklist.
+
+${c.missions.map((m, i) => `<details>\n<summary><strong>${['🛠️', '🗺️', '🌱', '🧠', '🍎', '⏱️', '💾', '🎨', '🧪', '🚀'][i]} MISSION ${String(i + 1).padStart(2, '0')} · ${m.title}</strong> — ${m.day}</summary>\n\n${missionBody(m)}\n</details>\n`).join('\n')}
+<details>
+<summary><strong>🎮 Open the complete game rules and worked example</strong></summary>
+
+${rules}
+</details>
+
+${acceptance}
+${delivery}
+<details>
+<summary><strong>🏆 Open your mentor’s scorecard — 100 points</strong></summary>
+
+${rubric}
+</details>
+
+<details>
+<summary><strong>📁 Where your work goes</strong></summary>
+
+${fenced(folderTree, 'text')}
+
+A simple Flutter structure is ${inline('lib/models/pet.dart')}, ${inline('lib/screens/')}, ${inline('lib/widgets/')} and ${inline('lib/services/pet_storage.dart')}. Start with setState and one clear owner of the pet state.
+
+</details>
+
+<details>
+<summary><strong>🔧 Customise or rebuild this assignment pack</strong></summary>
+
+Run these commands from the assignment root to install the guide’s development dependencies and regenerate content, animation and styles:
+
+${fenced('npm ci\nnpm run assets\nnpm run build\nnpm run check\nnpm run site')}
+
+Edit ${inline('guide/content.js')} for the shared brief. ${inline('npm run build')} regenerates both Markdown documents and compiles Tailwind CSS. Update this generator if you want to change the README layout; direct edits to generated Markdown are overwritten.
+
+${inline('npm run test:browser')} checks the guide’s rules, storage, links, animation and layouts. It uses an installed Playwright Chromium or Windows Edge. You can set ${inline('POCKET_PAL_BROWSER')} to another Chromium executable or install Chromium with ${inline('npx playwright install chromium')}.
+
+The guide’s npm tools are separate from Quadri’s Flutter tools. The deployment workflow publishes only the guide and brief; Quadri deploys his Flutter game separately in mission 10.
+
+</details>
+
+<details>
+<summary><strong>📚 Your official learning library</strong></summary>
+
+${resources}
+</details>
+
+---
+
+<p align="center"><img src="assets/pocket-pal-icon.png" width="64" alt="Pocket Pal icon"></p>
+<p align="center"><strong>Build one small thing. Make it work. Give it a little life.</strong><br>Quadri, your finish line is a live game and code you can explain.</p>
+
+[Back to the launch options ↑](#launch-the-interactive-guide) · [Full specification](assignment.md) · [Artwork you can reuse](assets/README.md)
+`;
+
 await fs.writeFile('assignment.md', assignment);
 await fs.writeFile('README.md', readme);
-console.log('Generated assignment.md and README.md from guide/content.js.');
+console.log('Generated the assignment and animated GitHub quest hub from shared content.');

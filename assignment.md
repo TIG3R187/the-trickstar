@@ -1,10 +1,10 @@
 # Pocket Pal — Quadri’s Flutter assignment
 
-<img src="assets/pocket-pal-icon.png" width="112" alt="Pocket Pal: a mint creature with a leaf on its head">
+<img src="assets/pocket-pal-icon.png" width="112" alt="Pocket Pal: a mint creature with a leafy sprout">
 
 **Assigned to:** Quadri · **Level:** about one month of Flutter/Dart · **Deliverable:** a deployed virtual pet game
 
-[Visual README](README.md) · [Interactive Tailwind guide](README.html)
+[Quest hub](README.md) · [How to launch the interactive guide](README.md#launch-the-interactive-guide)
 
 ## The goal
 
@@ -18,7 +18,7 @@ Quadri, build and deploy a small Flutter virtual pet game that you can explain, 
 
 **Scope:** Required: Flutter web, two pet styles, adoption, a dashboard, care actions, a visible-time timer, mood feedback, local saving, responsive layouts and deployment. Optional: an Android APK, sound, accessories or a small animation. Accounts, a backend, purchases, notifications and offline time progression are outside this assignment.
 
-The Tailwind HTML page is a reference guide and rules playground. Your submitted game must be written in Flutter and Dart. You are responsible for building it; this pack does not include the finished Flutter solution.
+The Tailwind HTML guide is a reference and rules playground. Your submitted game must be written in Flutter and Dart, inside `app/`. This pack gives you a route to follow; you create the Flutter implementation.
 
 ## Game rules
 
@@ -39,7 +39,7 @@ The Tailwind HTML page is a reference guide and rules playground. Your submitted
 
 ## Your 14-day route
 
-| When | Mission | Skill |
+| When | Mission | Skill unlocked |
 | --- | --- | --- |
 | Day 1 | 01. Get your launchpad ready | Setup & Git |
 | Day 2 | 02. Sketch a tiny world | Planning & layout |
@@ -56,9 +56,9 @@ The Tailwind HTML page is a reference guide and rules playground. Your submitted
 
 ### 01. Get your launchpad ready — Day 1
 
-**What to do:** Prepare a Flutter web project in app/ and make your first commit.
+**Your task:** Prepare a Flutter web project in app/ and make your first commit.
 
-**How to do it:**
+**Your route:**
 
 1. Install Flutter stable and your editor extensions. Run flutter doctor and address issues affecting your web target; Android tooling is only needed for the optional APK.
 2. Run the commands below from this assignment folder. The HTML guide is your reference; the Dart game belongs in app/.
@@ -72,54 +72,54 @@ cd app
 flutter run -d chrome
 ```
 
-Run from the assignment root. After `cd app`, stay in `app/` for Flutter commands.
+Run from the assignment root. After cd app, stay in app/ for Flutter commands.
 
-**Done when:**
+**Mission cleared when:**
 
 - [ ] The Flutter app launches in a browser without runtime errors.
 - [ ] The repository contains an app/ folder and a meaningful first commit.
 
-**Hint:** If Chrome is unavailable, use flutter run -d web-server and open its printed URL in your browser.
+> **Field note:** If Chrome is unavailable, use flutter run -d web-server and open its printed URL in your browser.
 
 ### 02. Sketch a tiny world — Day 2
 
-**What to do:** Plan adoption and home screens before adding game logic.
+**Your task:** Plan adoption and home screens before adding game logic.
 
-**How to do it:**
+**Your route:**
 
 1. Sketch the two screens on paper or in any design tool. Mark the pet picker, name field, three stats and care buttons.
 2. Choose two distinct pet styles, a readable palette and at least five mood expressions. Reuse the supplied generic icon or draw your own.
 3. Write down the rule table in your own words. Decide where state will live and which widgets can be reused.
 
-**Done when:**
+**Mission cleared when:**
 
 - [ ] You have two screen sketches and a small component list.
 - [ ] You can explain why a higher hunger number means the pet needs food.
 
-**Hint:** Two colour variants count as two styles. You do not need custom animation or professional illustration.
+> **Field note:** Two colour variants count as two styles. You do not need custom animation or professional illustration.
 
 ### 03. Meet your first pal — Days 3–4
 
-**What to do:** Build adoption with a style picker and a validated name.
+**Your task:** Build adoption with a style picker and a validated name.
 
-**How to do it:**
+**Your route:**
 
 1. Create an adoption screen using a Form and a TextFormField. Trim the name and validate the 2–16 character rule.
 2. Let the user select between two pet styles and show the selected state clearly.
 3. On Adopt, create the starting pet state and open the dashboard. Do not allow repeated taps to create multiple pets.
 
-**Done when:**
+**Mission cleared when:**
 
 - [ ] Blank, one-character and overlong names show clear errors.
 - [ ] Adopting with a valid name and style opens the correct pet dashboard.
 
-**Hint:** Start with placeholder art. The important part is a working journey from selection to dashboard.
+> **Field note:** Start with placeholder art. The important part is a working journey from selection to dashboard.
 
 ### 04. Give your pal a brain — Day 5
 
-**What to do:** Represent the pet as data and show its live statistics.
+**Your task:** Represent the pet as data and show its live statistics.
 
-**How to do it:**
+**Your route:**
 
 1. Create a Pet model with name, style, hunger, happiness, energy and isSleeping. Add JSON conversion when you reach the saving mission.
 2. Keep pet state in one clear owner. Use setState to rebuild the screen when it changes. Avoid separate copies of each stat in different widgets.
@@ -131,54 +131,54 @@ int clampStat(int value) => value.clamp(0, 100).toInt();
 
 Write this helper in your Dart code; it is not a terminal command.
 
-**Done when:**
+**Mission cleared when:**
 
 - [ ] The dashboard displays the chosen name, style and all three starting values.
 - [ ] Stats have one source of truth and cannot leave the 0–100 range.
 
-**Hint:** Keep numeric rules in Dart methods that can be tested without rendering the whole screen.
+> **Field note:** Keep numeric rules in Dart methods that can be tested without rendering the whole screen.
 
 ### 05. Feed. Play. Snooze. — Day 6
 
-**What to do:** Implement the three care actions and mood priority exactly as specified.
+**Your task:** Implement the three care actions and mood priority exactly as specified.
 
-**How to do it:**
+**Your route:**
 
 1. Add Feed, Play and Sleep/Wake methods. Apply each change from the rule table, clamp values and refresh the UI.
 2. Disable unavailable actions with a visible explanation. Feed and Play must be unavailable while sleeping.
 3. Derive mood from the current state in the specified priority order. Update both a text label and the pet expression.
 
-**Done when:**
+**Mission cleared when:**
 
 - [ ] From the initial state, Feed then Play gives hunger 15, happiness 85 and energy 60.
 - [ ] Sleeping blocks Feed and Play, and Wake makes eligible actions available again.
 - [ ] A hungry and tired pet displays hungry because that condition has higher priority.
 
-**Hint:** Mood is computed from the pet; saving a second mood value creates a chance for the two to disagree.
+> **Field note:** Mood is computed from the pet; saving a second mood value creates a chance for the two to disagree.
 
 ### 06. Make the world tick — Day 7
 
-**What to do:** Update needs every 30 seconds while the game is visible.
+**Your task:** Update needs every 30 seconds while the game is visible.
 
-**How to do it:**
+**Your route:**
 
 1. Use one Timer.periodic with a 30-second interval and apply either the awake or sleeping tick.
 2. Observe lifecycle changes, for example with AppLifecycleListener. Cancel on inactive/hidden/paused/detached; start one new timer on resumed. Dispose your listener and timer.
 3. Use a temporary shorter interval while developing if helpful, but restore 30 seconds before submission. Do not change stats when returning from a hidden tab.
 
-**Done when:**
+**Mission cleared when:**
 
 - [ ] One awake tick from the initial state gives hunger 35, happiness 67 and energy 68.
 - [ ] One sleeping tick from the initial state gives hunger 32, happiness 70 and energy 80.
 - [ ] Hiding and returning to the tab never creates duplicate timers or time-away changes.
 
-**Hint:** Start the timer after the saved pet has loaded, never inside a widget build method.
+> **Field note:** Start the timer after the saved pet has loaded, never inside a widget build method.
 
 ### 07. Remember your little friend — Days 8–9
 
-**What to do:** Save locally, restore reliably and handle reset safely.
+**Your task:** Save locally, restore reliably and handle reset safely.
 
-**How to do it:**
+**Your route:**
 
 1. Run flutter pub add shared_preferences from app/. Follow the package documentation; SharedPreferencesAsync is suitable for a new implementation.
 2. Encode one versioned JSON object and save it under a named key. Save after adoption, successful actions and ticks. Await writes in order so older state cannot overwrite newer state.
@@ -190,38 +190,38 @@ cd app
 flutter pub add shared_preferences
 ```
 
-Run from the assignment root; skip `cd app` if you are already there.
+Run from the root; skip cd app if already inside app/.
 
-**Done when:**
+**Mission cleared when:**
 
 - [ ] Refreshing restores the name, style, stats and sleeping flag.
 - [ ] Canceling reset keeps the pet; confirming reset returns to adoption.
 - [ ] A failed save shows a message, and bad saved data cannot crash the app.
 
-**Hint:** Browser storage belongs to the browser and origin. It will not sync across devices, and clearing site data removes it.
+> **Field note:** Browser storage belongs to the browser and origin. It will not sync across devices, and clearing site data removes it.
 
 ### 08. Make it feel finished — Days 10–11
 
-**What to do:** Make your screens readable, responsive and pleasant to use.
+**Your task:** Make your screens readable, responsive and pleasant to use.
 
-**How to do it:**
+**Your route:**
 
 1. Try 375px and 1280px viewport widths. Use LayoutBuilder or sensible constraints to adapt the dashboard rather than stretching everything.
 2. Use readable text, clear focus states and at least 48×48 logical-pixel care controls. Show text labels for stats and moods instead of relying only on colour.
 3. Finish the loading, disabled and error states. Give each mood a recognisable expression, and use your keyboard to complete adoption and care actions.
 
-**Done when:**
+**Mission cleared when:**
 
 - [ ] No layout overflow at either required width.
 - [ ] You can adopt and care for the pet with a keyboard, and every action has understandable feedback.
 
-**Hint:** Do not spend the last two days adding optional features while the required journey is still broken.
+> **Field note:** Do not spend the last two days adding optional features while the required journey is still broken.
 
 ### 09. Try to break it, kindly — Day 12
 
-**What to do:** Check the rules and edge cases, then record evidence that they work.
+**Your task:** Check the rules and edge cases, then record evidence that they work.
 
-**How to do it:**
+**Your route:**
 
 1. Add at least three meaningful automated tests: stat clamping/action math, mood priority, and one user journey such as invalid adoption followed by successful adoption.
 2. Manually verify pause/resume, reload, disabled actions, reset cancel/confirm and invalid saved data. Record outcomes in app/TESTING.md.
@@ -233,20 +233,20 @@ flutter analyze
 flutter test
 ```
 
-Run these commands inside `app/`.
+Run inside app/.
 
-**Done when:**
+**Mission cleared when:**
 
 - [ ] Formatting, analysis and automated tests pass.
 - [ ] TESTING.md records actual manual check results, and the browser has no runtime errors.
 
-**Hint:** A boundary test should prove behaviour, such as feeding at hunger 10 yielding 0 rather than −10.
+> **Field note:** A boundary test should prove behaviour, such as feeding at hunger 10 yielding 0 rather than −10.
 
 ### 10. Put your pal on the internet — Days 13–14
 
-**What to do:** Deploy the Flutter game and explain what you built.
+**Your task:** Deploy the Flutter game and explain what you built.
 
-**How to do it:**
+**Your route:**
 
 1. Create a Firebase project and install the Firebase CLI following the official guide. Log in, build the app, then initialise classic Firebase Hosting from app/.
 2. Select your Firebase project. Set the public directory to build/web, choose Yes for single-page app, No for automatic GitHub builds unless you intend to configure them, and No if asked to overwrite index.html. Do not enable the experimental web-framework integration.
@@ -260,14 +260,14 @@ firebase init hosting
 firebase deploy --only hosting
 ```
 
-Run these commands inside `app/`.
+Run inside app/.
 
-**Done when:**
+**Mission cleared when:**
 
 - [ ] The live HTTPS URL serves the Flutter game and works after a page refresh.
 - [ ] Your repository, app README, test notes and walkthrough are ready to review.
 
-**Hint:** If the default Firebase welcome page appears, check public: build/web in firebase.json, rebuild and redeploy. Do not overwrite Flutter’s generated index.html.
+> **Field note:** If the default Firebase welcome page appears, check public: build/web in firebase.json, rebuild and redeploy. Do not overwrite Flutter’s generated index.html.
 
 ## Definition of done
 
@@ -308,7 +308,7 @@ Run these commands inside `app/`.
 | Deployment & explanation | 10 | Working public game URL, documentation and a clear walkthrough. |
 | **Total** | **100** | Core requirements come first. Bonus features do not replace them. |
 
-Be ready to explain your own code. Documentation, tutorials and AI assistance are allowed as learning aids; keep a short note of what you used and verify every change. Your mentor may ask you to change a rule live.
+Be ready to explain your code. Documentation, tutorials and AI assistance are allowed as learning aids; keep a short note of what you used and verify every change. Your mentor may ask you to change a rule live.
 
 ## Official learning resources
 
@@ -328,4 +328,4 @@ Be ready to explain your own code. Documentation, tutorials and AI assistance ar
 
 ---
 
-This is an assignment brief, not a claim that the game is already built or deployed. The local HTML playground illustrates the rules. Original icon and GIF assets are included for this assignment; see [asset notes](assets/README.md).
+The HTML demo and original animations illustrate the experience you will build. See [asset notes](assets/README.md) for reusable artwork. To open the interactive guide, use [the launch instructions](README.md#launch-the-interactive-guide); GitHub’s file viewer displays HTML source code.

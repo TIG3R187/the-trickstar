@@ -11,3 +11,35 @@ body{margin:0}a,button,input,summary{-webkit-tap-highlight-color:transparent}a{t
 @media(max-width:640px){h1{letter-spacing:-2px}.hero{padding-top:36px}.pet-card{transform:none}.section-space{padding-top:42px;padding-bottom:42px}.mission summary{padding:16px;gap:10px}.mission-title{font-size:14px}.mission-body{padding:0 18px 20px}.mission-number{width:32px;height:32px}.hero-meta{gap:20px}.brand{font-size:18px}.brand-sub{font-size:7px;letter-spacing:1px}.eyebrow{font-size:10px;letter-spacing:1.5px}}
 @media(prefers-reduced-motion:reduce){:root{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}.launch-panel>img{display:none}}
 @media print{.site-header,.pet-card,.progress-panel,.toast,.button,.small-button,.text-button,.copy-button{display:none!important}body{background:white}main{max-width:none!important}.section-space{padding:20px 0}details{break-inside:avoid}.mission-body{display:block!important}.mission{overflow:visible}.hero{display:block}.hero h1{font-size:42px}.mission summary{min-height:0}.mission-check{display:none}}
+
+/* The guide has motion; GitHub gets the separately rendered GIF edition. */
+.hero-footnote{font-size:11px;color:#6b8064;margin-top:22px;font-style:italic}
+.hero>div:first-child{animation:hero-arrive .65s ease-out both}
+.hero .pet-card{animation:hero-arrive .8s .12s ease-out both;box-shadow:9px 12px 0 #d9e3c547,0 18px 50px #354c2510}
+#pet-art{animation:pal-bob 2.8s ease-in-out infinite;transform-origin:50% 83%}
+#pet-art[data-sleeping="true"]{animation:pal-breathe 4s ease-in-out infinite}
+.cloud-one{animation:cloud-drift 9s ease-in-out infinite}.cloud-two{animation:cloud-drift 11s -3s ease-in-out infinite reverse}
+.sparkle{animation:star-pulse 2.4s ease-in-out infinite}.status-dot{animation:status-pulse 3s ease-out infinite}
+.garden-flower{position:absolute;bottom:15px;z-index:3;font-size:25px;color:#d2a56a;transform-origin:bottom;animation:flower-sway 4s ease-in-out infinite}
+.flower-one{left:40px}.flower-two{right:40px;font-size:19px;animation-delay:-2s;color:#a2ac62}
+.pet-reaction{position:absolute;left:50%;top:36px;z-index:8;font-size:12px;font-weight:800;letter-spacing:1px;color:#4b6945;opacity:0;white-space:nowrap;margin-left:-52px;background:#fffdf7;border:1px solid #d8dfc9;border-radius:20px;padding:7px 12px}
+.concept-preview{display:grid;grid-template-columns:1.3fr 1fr;gap:28px;align-items:center;background:#e9eedf;border:1px solid #d8dfcd;border-radius:22px;overflow:hidden;padding:20px;margin-top:38px}
+.concept-preview>img{width:100%;height:auto;border-radius:14px}.concept-preview>div{padding:15px 20px}.concept-preview .eyebrow{font-size:9px;line-height:1.8;margin-bottom:14px}.concept-preview p{font-family:Georgia,serif;font-size:27px;line-height:1.3;letter-spacing:-.7px}.concept-preview div>span:last-child{display:block;font-size:12px;line-height:1.9;color:#6a7861;margin-top:15px;max-width:290px}
+.quest-map{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:8px;padding-bottom:25px;margin-bottom:25px;border-bottom:1px solid #d9dfce}
+.map-stop{border:1px solid #dce2cf;border-radius:12px;padding:13px 5px;background:#fcfbf5;display:flex;flex-direction:column;align-items:center;gap:10px;transition:transform .2s,background .2s}
+.map-stop:hover{transform:translateY(-4px);background:#eaf0de}.map-stop>span:last-child{font-size:9px;text-align:center;line-height:1.4;min-height:26px;display:flex;align-items:center}.map-number{width:32px;height:32px;background:#e4ebd8;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800}
+.map-stop.is-complete{background:#dfebd2;border-color:#adbf9d}.map-stop.is-complete .map-number{background:#446c46;color:#fff}.xp-badge{display:flex;align-items:center;gap:7px;margin-top:20px;font-size:12px;color:#446443;background:#dce8cd;border-radius:8px;padding:10px}.xp-badge>span:first-child{color:#a8803e;font-size:19px}.xp-badge>span:last-child{margin-left:auto;font-size:9px}
+.confetti-bit{position:fixed;width:7px;height:11px;border-radius:2px;pointer-events:none;z-index:80;animation:confetti-fly 1s ease-out forwards}
+.motion-paused *,.motion-paused *:before,.motion-paused *:after{animation-play-state:paused!important;scroll-behavior:auto!important}
+@keyframes hero-arrive{from{opacity:0;translate:0 16px}to{opacity:1;translate:0 0}}
+@keyframes pal-bob{0%,100%{transform:translateX(-50%) translateY(0) rotate(-1deg)}50%{transform:translateX(-50%) translateY(-12px) rotate(2deg)}}
+@keyframes pal-breathe{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.025,.97)}}
+@keyframes cloud-drift{0%,100%{translate:-10px 0}50%{translate:14px -3px}}
+@keyframes star-pulse{0%,100%{opacity:.5;scale:.85}50%{opacity:1;scale:1.15}}
+@keyframes status-pulse{0%{box-shadow:0 0 0 0 #86a96d66}70%,100%{box-shadow:0 0 0 7px #86a96d00}}
+@keyframes flower-sway{0%,100%{rotate:-7deg}50%{rotate:8deg}}
+@keyframes confetti-fly{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--spin))}}
+@media(max-width:1023px){.quest-map{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media(max-width:640px){.concept-preview{grid-template-columns:1fr;gap:10px;padding:12px;margin-top:25px}.concept-preview>div{padding:12px}.concept-preview p{font-size:25px}.hero-footnote{display:none}.quest-map{gap:5px}.map-stop{padding:10px 3px}.map-stop>span:last-child{font-size:8px;min-height:28px}.motion-toggle{padding:9px 11px}.garden-flower{bottom:20px}.flower-one{left:24px}.flower-two{right:24px}}
+@media(prefers-reduced-motion:reduce){.hero>div:first-child,.hero .pet-card{opacity:1;translate:none}.confetti-bit{display:none}}
+@media print{.concept-preview,.quest-map,.motion-toggle,.confetti-bit{display:none!important}}
