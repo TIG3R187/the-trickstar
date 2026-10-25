@@ -26,6 +26,13 @@ try {
   await page.reload();
   await page.locator('#mission-setup').waitFor();
   assert.equal(await page.locator('.mission').count(), 10);
+  assert.equal(await page.locator('#workbench-content .workbench-steps li').count(), 10);
+  assert.equal(await page.locator('.snippet').count(), 16);
+  assert.equal(await page.locator('#question-list details').count(), 15);
+  await page.locator('#mission-setup .snippet').first().locator('summary').click();
+  await page.locator('[data-copy-block="snippet-first-screen"]').click();
+  await page.locator('#toast').filter({ hasText: /Copied|Text selected/ }).waitFor({ state: 'visible' });
+  await page.locator('#mission-setup .snippet').first().locator('summary').click();
   await page.locator('#feed').click(); await page.locator('#play').click();
   assert.deepEqual(await Promise.all(['hunger', 'happiness', 'energy'].map(stat)), [15, 85, 60]);
   await page.locator('#sleep').click();
@@ -54,15 +61,15 @@ try {
   assert.equal(await page.locator('#progress-xp').innerText(), '100 XP');
   await page.locator('#map-ship').click();
   assert.equal(await page.locator('#mission-ship').getAttribute('open'), '');
-  assert.equal(await page.locator('#mission-ship summary').evaluate(el => document.activeElement === el), true);
+  assert.equal(await page.locator('#mission-ship > summary').evaluate(el => document.activeElement === el), true);
   await page.locator('#expand-all').click();
   assert.equal(await page.locator('.mission[open]').count(), 10);
   await page.locator('#expand-all').click();
   assert.equal(await page.locator('.mission[open]').count(), 0);
-  await page.locator('#mission-setup summary').focus(); await page.keyboard.press('Enter');
+  await page.locator('#mission-setup > summary').focus(); await page.keyboard.press('Enter');
   assert(await page.locator('#mission-setup').getAttribute('open') !== null);
   await page.locator('[data-copy="setup"]').click();
-  assert(await page.locator('#toast').isVisible());
+  await page.locator('#toast').filter({ hasText: /Copied|Text selected/ }).waitFor({ state: 'visible' });
   const downloadPromise = page.waitForEvent('download');
   await page.locator('#export-progress').click();
   const download = await downloadPromise;
@@ -87,8 +94,16 @@ try {
   await page.evaluate(() => localStorage.clear()); await page.reload();
   for (const width of [375, 768, 1280, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
+    if (width === 375) {
+      await page.locator('#mission-model').evaluate(el => { el.open = true; });
+      await page.locator('#mission-model .snippet').first().evaluate(el => { el.open = true; });
+    }
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
     assert(!overflow, `Layout overflow at ${width}px`);
+    if (width === 375) {
+      await page.locator('#mission-model .snippet').first().evaluate(el => { el.open = false; });
+      await page.locator('#mission-model').evaluate(el => { el.open = false; });
+    }
     const brokenImages = await page.locator('img').evaluateAll(imgs => imgs.filter(img => img.complete && img.naturalWidth === 0).map(img => img.src));
     assert.deepEqual(brokenImages, []);
     if (width === 375 || width === 1440) {

@@ -5,6 +5,7 @@ import path from 'node:path';
 
 const context = {};
 vm.runInNewContext(await fs.readFile('guide/content.js', 'utf8'), context);
+vm.runInNewContext(await fs.readFile('guide/workshop.js', 'utf8'), context);
 const c = context.POCKET_PAL;
 assert.equal(c.missions.length, 10);
 assert.equal(c.rubric.reduce((sum, row) => sum + row[1], 0), 100);
@@ -64,4 +65,23 @@ const entry = await fs.readFile('index.html', 'utf8');
 assert(entry.includes('README.html') && entry.includes('location.replace'));
 const workflow = await fs.readFile('.github/workflows/deploy-guide.yml', 'utf8');
 for (const value of ['pages: write', 'id-token: write', 'actions/deploy-pages@v4', 'npm run check']) assert(workflow.includes(value));
-console.log('Passed: matching brief content, local links, exact animated GIF frame counts, launch route, Pages workflow and compiled Tailwind.');
+const normalizedWorkflow = workflow.replaceAll('\r\n', '\n');
+const buildJob = normalizedWorkflow.split('\n  build:\n')[1].split('\n  deploy:\n')[0];
+assert(!buildJob.includes('configure-pages'), 'Validation must work before Pages is configured');
+assert(normalizedWorkflow.includes("if: github.event_name == 'workflow_dispatch' && inputs.deploy_pages"));
+assert(/deploy_pages:[\s\S]*?default: false/.test(normalizedWorkflow), 'Pages deployment must be opt-in');
+const snippetIds = new Set();
+for (const mission of c.missions) {
+  assert(mission.editor?.length >= 3 && mission.files?.length > 0 && mission.snippets?.length > 0, `Walkthrough for ${mission.id}`);
+  for (const snippet of mission.snippets) {
+    assert(!snippetIds.has(snippet.id), `Unique snippet ID: ${snippet.id}`); snippetIds.add(snippet.id);
+    if (snippet.filename) assert.equal((await fs.readFile(`learning/snippets/${snippet.filename}`, 'utf8')).trimEnd(), snippet.code.trimEnd());
+    if (snippet.language === 'json') JSON.parse(snippet.code);
+  }
+}
+for (const name of ['assignment.md', 'README.md']) {
+  const text = await fs.readFile(name, 'utf8');
+  assert(text.includes(c.workbench.title) && text.includes('Before you ask your mentor'));
+  for (const mission of c.missions) for (const snippet of mission.snippets) assert(text.includes(snippet.code), `${name}: ${snippet.id}`);
+}
+console.log('Passed: synced brief/walkthrough/snippets, local links, GIF frames, browser entry, compiled Tailwind and Pages-independent validation workflow.');

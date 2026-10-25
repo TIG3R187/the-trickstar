@@ -78,12 +78,17 @@
   $('outcome-copy').textContent = c.outcome;
   $('scope-copy').textContent = c.scope;
   $('tools-copy').textContent = c.tools;
+  $('workbench-content').innerHTML = `<p class="section-intro">${escape(c.workbench.intro)}</p><ol class="workbench-steps">${c.workbench.steps.map(x => `<li>${escape(x)}</li>`).join('')}</ol><details class="workshop-details"><summary>Open the folder map and code ownership guide</summary><pre>${escape(c.workbench.folderTree)}</pre><p>${escape(c.workbench.workflow)}</p><p>${escape(c.workbench.snippetNote)}</p><ul>${c.codebaseFiles.map(([file, role]) => `<li><code>${escape(file)}</code> — ${escape(role)}</li>`).join('')}</ul></details>`;
+  $('question-list').innerHTML = c.commonQuestions.map(([q, a]) => `<details class="workshop-details"><summary>${escape(q)}</summary><p>${escape(a)}</p></details>`).join('');
+  $('help-template').textContent = c.helpTemplate;
   $('quest-map').innerHTML = c.missions.map((m, i) => `<button class="map-stop" id="map-${m.id}" data-jump="${m.id}"><span class="map-number">${String(i + 1).padStart(2, '0')}</span><span>${escape(m.skill)}</span></button>`).join('');
   $('mission-list').innerHTML = c.missions.map((m, i) => `
     <details class="mission" id="mission-${m.id}" ${i === 0 ? 'open' : ''}>
       <summary><span class="mission-number">${String(i + 1).padStart(2, '0')}</span><span><span class="mission-title">${escape(m.title)}</span><span class="mission-day block">${escape(m.day)} · ${escape(m.skill)}</span></span><span class="mission-arrow" aria-hidden="true">+</span></summary>
       <div class="mission-body"><p>${escape(m.what)}</p><h4>How to do it</h4><ol>${m.how.map(x => `<li>${escape(x)}</li>`).join('')}</ol>
       ${m.code ? `<div class="code-block"><div class="code-top"><span>${m.id === 'model' ? 'DART HELPER' : 'TERMINAL'}</span><button class="copy-button" data-copy="${m.id}" aria-label="Copy ${escape(m.title)} commands">Copy</button></div><pre id="code-${m.id}"><code>${escape(m.code)}</code></pre></div><p class="mt-2 text-xs">${m.id === 'setup' ? 'Run from the assignment root. After cd app, stay in app/ for Flutter commands.' : m.id === 'save' ? 'Run from the root, or skip cd app if already inside app/.' : m.id === 'model' ? 'A helper to write in your Dart code; not a terminal command.' : 'Run inside app/.'}</p>` : ''}
+      <h4>In VS Code</h4><ol>${m.editor.map(x => `<li>${escape(x)}</li>`).join('')}</ol><h4>Files you will edit</h4><ul>${m.files.map(x => `<li><code>${escape(x)}</code></li>`).join('')}</ul>
+      ${m.snippets.map(s => `<details class="workshop-details snippet"><summary>${escape(s.title)}</summary><p><strong>${escape(s.file)}</strong><br>${escape(s.placement)}</p><div class="code-block"><div class="code-top"><span>${escape(s.language.toUpperCase())}</span><button class="copy-button" data-copy-block="snippet-${s.id}" aria-label="Copy ${escape(s.title)}">Copy</button></div><pre id="snippet-${s.id}"><code>${escape(s.code)}</code></pre></div><p>${escape(s.explain)}</p></details>`).join('')}
       <h4>You’re done when</h4><ul>${m.done.map(x => `<li>${escape(x)}</li>`).join('')}</ul><p class="mission-hint"><strong>A little help:</strong> ${escape(m.hint)}</p>
       <label class="mission-check"><input type="checkbox" id="complete-${m.id}" data-mission="${m.id}"><span>I’ve built and checked this mission</span></label></div>
     </details>`).join('');
@@ -109,8 +114,8 @@
     progress.checks = input.checked ? [...new Set([...progress.checks, i])] : progress.checks.filter(n => n !== i);
     saveProgress();
   }));
-  document.querySelectorAll('[data-copy]').forEach(button => button.addEventListener('click', async () => {
-    const pre = $(`code-${button.dataset.copy}`);
+  document.querySelectorAll('[data-copy],[data-copy-block]').forEach(button => button.addEventListener('click', async () => {
+    const pre = button.dataset.copyBlock ? $(button.dataset.copyBlock) : $(`code-${button.dataset.copy}`);
     try {
       if (!navigator.clipboard) throw new Error('Clipboard unavailable');
       await navigator.clipboard.writeText(pre.textContent);

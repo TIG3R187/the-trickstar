@@ -3,6 +3,7 @@ import vm from 'node:vm';
 
 const sandbox = {};
 vm.runInNewContext(await fs.readFile('guide/content.js', 'utf8'), sandbox);
+vm.runInNewContext(await fs.readFile('guide/workshop.js', 'utf8'), sandbox);
 const c = sandbox.POCKET_PAL;
 const tick = String.fromCharCode(96);
 const inline = value => tick + value + tick;
@@ -12,6 +13,44 @@ const checks = xs => xs.map(x => `- [ ] ${x}`).join('\n');
 const repo = 'https://github.com/TIG3R187/the-trickstar';
 const hostedGuide = 'https://tig3r187.github.io/the-trickstar/';
 const offlinePack = `${repo}/raw/refs/heads/main/Pocket-Pal-Quadri-Assignment.zip`;
+
+const workbench = `## ${c.workbench.title}
+
+${c.workbench.intro}
+
+${c.workbench.steps.map((step, i) => `${i + 1}. ${step}`).join('\n')}
+
+### Files and responsibilities
+
+${fenced(c.workbench.folderTree, 'text')}
+
+| File | Responsibility |
+| --- | --- |
+${c.codebaseFiles.map(row => `| ${inline(row[0])} | ${row[1]} |`).join('\n')}
+
+**How the pieces connect:** ${c.workbench.workflow}
+
+**How to use the snippets:** ${c.workbench.snippetNote}
+`;
+const troubleshooting = `## Before you ask your mentor
+
+${c.commonQuestions.map(([question, answer]) => `<details>\n<summary><strong>${question}</strong></summary>\n\n${answer}\n\n</details>`).join('\n\n')}
+
+### Send a useful help request
+
+${fenced(c.helpTemplate, 'text')}
+`;
+
+const snippetMarkdown = snippet => `#### ${snippet.title}
+
+**Location:** ${inline(snippet.file)}
+
+**Placement:** ${snippet.placement}
+
+${fenced(snippet.code, snippet.language)}
+
+${snippet.explain}
+`;
 
 const goal = `## The goal
 
@@ -47,6 +86,13 @@ function missionBody(m) {
 
 ${m.how.map((x, i) => `${i + 1}. ${x}`).join('\n')}
 ${m.code ? '\n' + fenced(m.code, m.id === 'model' ? 'dart' : 'sh') + '\n\n' + note + '\n' : ''}
+**In VS Code:**
+
+${m.editor.map((step, i) => `${i + 1}. ${step}`).join('\n')}
+
+**Files to work on:** ${m.files.map(inline).join(', ')}
+
+${m.snippets.map(snippetMarkdown).join('\n')}
 **Mission cleared when:**
 
 ${checks(m.done)}
@@ -100,6 +146,7 @@ const assignment = `# Pocket Pal — Quadri’s Flutter assignment
 [Quest hub](README.md) · [How to launch the interactive guide](README.md#launch-the-interactive-guide)
 
 ${goal}
+${workbench}
 ${rules}
 ${schedule}
 ## Step-by-step assignment
@@ -108,6 +155,7 @@ ${c.missions.map((m, i) => `### ${String(i + 1).padStart(2, '0')}. ${m.title} �
 ${acceptance}
 ${delivery}
 ${rubric}
+${troubleshooting}
 ${resources}
 ---
 
@@ -171,7 +219,9 @@ The repository includes a GitHub Pages workflow. The owner needs to enable Pages
 
 1. Push this updated pack to the repository’s **main** branch.
 2. Open **[Settings → Pages](${repo}/settings/pages)**. Under **Build and deployment → Source**, choose **GitHub Actions**.
-3. Open **[Actions → Publish Pocket Pal guide](${repo}/actions/workflows/deploy-guide.yml)** and run the workflow. Wait for the deployment job to turn green.
+3. Open **[Actions → Publish Pocket Pal guide](${repo}/actions/workflows/deploy-guide.yml)**, choose **Run workflow**, check **deploy_pages**, and run it. Wait for the deployment job to turn green.
+
+Pushes and pull requests run build/check/package only, so they can pass before Pages is enabled. A run with deploy_pages left unchecked validates the guide and skips publishing. The repository owner controls Pages setup and chooses when to publish.
 
 **After deployment, the browser launch address is [${hostedGuide}](${hostedGuide}).** This is the expected Pages address, not a claim that hosting has already been enabled. Use the local route immediately while publishing is pending.
 
@@ -190,6 +240,12 @@ GitHub’s ${inline('/blob/main/README.html')} URL shows source code. Use the Pa
 The GIFs are original concept animations. The interactive guide is a working rules playground. **The Flutter game is yours to build.**
 
 ${goal}
+<details>
+<summary><strong>🧰 Quadri: open your VS Code workbench, file map and first steps</strong></summary>
+
+${workbench}
+</details>
+
 <p align="center"><img src="assets/quest-route.gif" width="960" alt="Animated route from adoption to care, saving and shipping"></p>
 
 ${schedule}
@@ -198,6 +254,7 @@ ${schedule}
 Click a mission to open its route, commands, field notes and completion checks. In the browser guide, you can tick off missions, earn progress and export your checklist.
 
 ${c.missions.map((m, i) => `<details>\n<summary><strong>${['🛠️', '🗺️', '🌱', '🧠', '🍎', '⏱️', '💾', '🎨', '🧪', '🚀'][i]} MISSION ${String(i + 1).padStart(2, '0')} · ${m.title}</strong> — ${m.day}</summary>\n\n${missionBody(m)}\n</details>\n`).join('\n')}
+${troubleshooting}
 <details>
 <summary><strong>🎮 Open the complete game rules and worked example</strong></summary>
 
@@ -228,7 +285,7 @@ Run these commands from the assignment root to install the guide’s development
 
 ${fenced('npm ci\nnpm run assets\nnpm run build\nnpm run check\nnpm run site')}
 
-Edit ${inline('guide/content.js')} for the shared brief. ${inline('npm run build')} regenerates both Markdown documents and compiles Tailwind CSS. Update this generator if you want to change the README layout; direct edits to generated Markdown are overwritten.
+Edit ${inline('guide/content.js')} for the brief and ${inline('guide/workshop.js')} for the VS Code walkthrough and snippets. ${inline('npm run build')} regenerates both Markdown documents, helper files in learning/snippets/ and compiled Tailwind CSS. Update this generator to change the README layout; direct edits to generated Markdown are overwritten.
 
 ${inline('npm run test:browser')} checks the guide’s rules, storage, links, animation and layouts. It uses an installed Playwright Chromium or Windows Edge. You can set ${inline('POCKET_PAL_BROWSER')} to another Chromium executable or install Chromium with ${inline('npx playwright install chromium')}.
 
@@ -252,4 +309,11 @@ ${resources}
 
 await fs.writeFile('assignment.md', assignment);
 await fs.writeFile('README.md', readme);
+await fs.mkdir('learning/snippets', { recursive: true });
+for (const mission of c.missions) {
+  for (const snippet of mission.snippets) {
+    if (snippet.filename) await fs.writeFile(`learning/snippets/${snippet.filename}`, snippet.code + '\n');
+  }
+}
+await fs.writeFile('learning/README.md', '# Quadri’s snippet library\n\nThese are complete helper examples from the assignment. Copy each file into the destination stated in its mission; filenames here are references, not an assembled Flutter app. Start with assignment.md → Quadri’s VS Code workbench, then follow the ten missions in order.\n\nfirst_screen.dart becomes app/lib/main.dart for mission 01. Copy pet.dart into app/lib/models/, adoption_screen.dart into app/lib/screens/, pet_stat.dart into app/lib/widgets/, and storage/clock helpers into app/lib/services/. Put pet_test.dart in app/test/. launch.json belongs in app/.vscode/; firebase.json belongs in app/ after Firebase initialization.\n\nQuadri still builds GameScreen, integrates adoption/loading/reset, implements Play and visual mood feedback, and writes the widget journey test. Imports and paths are intended for those destination folders. Edit guide/workshop.js and rebuild to change these generated examples.\n');
 console.log('Generated the assignment and animated GitHub quest hub from shared content.');
