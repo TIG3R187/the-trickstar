@@ -2,14 +2,83 @@
 (() => {
   const c = globalThis.POCKET_PAL;
   const dollar = '$';
+  c.beginner = {
+    title: 'Quadri: fix the workspace, then build one small thing',
+    diagnosis: 'The supplied screenshots show errors in learning/snippets/adoption_screen.dart. That directory contains reference examples outside the Flutter package. The Flutter app is in flutter_application_1/. Fix the first unresolved Flutter import in the correct project context before treating the later class errors as separate bugs. These screenshots do not establish whether there are additional errors inside the app.',
+    recovery: [
+      'Keep the existing flutter_application_1 folder and your work. In VS Code choose File → Open Folder and select the folder named flutter_application_1 inside the-trickstar. Do not create another app or rename the existing folder.',
+      'In Explorer, you should now see pubspec.yaml and lib/ directly under the open folder. Open lib/main.dart. Keep the assignment HTML or START_HERE.md in a separate window for reading.',
+      'Choose Terminal → New Terminal. Run Get-Location and Get-ChildItem pubspec.yaml. The terminal must be inside flutter_application_1. If the file is not found, stop and open the correct folder.',
+      'Run flutter pub get and wait for it to finish. If flutter is not recognized, install/configure the Flutter SDK and reopen VS Code. Flutter by Dart Code must also be installed. Do not add package:flutter/material.dart as a separate dependency.',
+      'Use Ctrl+Shift+P → Dart: Restart Analysis Server. If that command is unavailable, install the Flutter extension, reopen this Flutter folder and run Flutter: Run Flutter Doctor.',
+      'Run flutter analyze from this folder. Read the first error that points into your own lib/ or test/. Errors still listed for learning/snippets mean the guide root is still open in another workspace/window.',
+      'Run flutter devices. If Chrome is listed, run flutter run -d chrome --web-port 7357. If Chrome is unavailable, run flutter run -d web-server --web-port 7357 and open the printed address in a browser.',
+      'Only copy an example when its mission asks for it, and paste it into the destination under lib/. Reference files now end in .dart.txt. They are text to read; their original imports resolve only after copying them into the Flutter project.'
+    ],
+    commands: 'Get-Location\nGet-ChildItem pubspec.yaml\nflutter pub get\nflutter analyze\nflutter devices\nflutter run -d chrome --web-port 7357',
+    pathNote: 'Throughout the longer assignment, app/ means your actual Flutter project folder. For Quadri’s existing project, substitute flutter_application_1/ wherever a path says app/. A folder name and the package name are different: read name: in pubspec.yaml. For example, package:pocket_pal/models/pet.dart becomes package:flutter_application_1/models/pet.dart only if the package name is flutter_application_1. Keep package:flutter/material.dart unchanged.',
+    gitNote: 'The 130 staged files in Source Control are Git changes awaiting a commit; that count does not cause a Flutter import error. Creating a Flutter project with several platforms produces many files. Review them normally without deleting the project or making a second copy.',
+    checkpoints: [
+      ['1. Run and feed', 'First run the existing generated app unchanged. Once it runs, back up lib/main.dart or commit it, then try the single-file exercise below. See hunger 30, press Feed and see 10, press again and see 0. Today’s work can stop here.'],
+      ['2. Add care actions', 'In the same file, add happiness 70 and energy 70. Implement Play (+15 happiness, −10 energy, +5 hunger), then Sleep/Wake. Start with the action rules; leave timer and saving for later.'],
+      ['3. Add adoption and tidy up', 'Add a validated pet name and two styles. Only after this journey works, extract the Pet model and reusable widgets using the longer missions. Keep one working project throughout.'],
+      ['4. Add persistence and timing', 'Once Quadri can explain his button handlers and setState, add saving, then a single visible-time timer. Test and deploy last. The full assignment remains the final target; agree each checkpoint with the mentor before moving on.']
+    ],
+    starter: `import 'package:flutter/material.dart';
+
+void main() => runApp(const MaterialApp(home: FirstPetScreen()));
+
+class FirstPetScreen extends StatefulWidget {
+  const FirstPetScreen({super.key});
+
+  @override
+  State<FirstPetScreen> createState() => _FirstPetScreenState();
+}
+
+class _FirstPetScreenState extends State<FirstPetScreen> {
+  int _hunger = 30;
+
+  void _feed() {
+    setState(() {
+      _hunger = (_hunger - 20).clamp(0, 100).toInt();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Quadri’s first Pocket Pal')),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('🌱', style: TextStyle(fontSize: 72)),
+            const Text('Sprout'),
+            Text('Hunger: ${dollar}_hunger / 100'),
+            const Text('Lower hunger means a fuller pet.'),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: _hunger == 0 ? null : _feed,
+              child: const Text('Feed'),
+            ),
+            if (_hunger == 0) const Text('Sprout is full.'),
+          ],
+        ),
+      ),
+    );
+  }
+}`,
+    starterNote: 'Complete file for checkpoint 1 only: replace lib/main.dart after backing up your existing file. No extra packages, assets or other Dart files are needed. Run it, then explain what setState and clamp do. Return to your existing main.dart if you are already further along; this exercise is not a reason to overwrite working features.',
+    help: 'If package:flutter/material.dart still cannot resolve inside flutter_application_1/lib/main.dart after pub get succeeds, send the first flutter analyze error plus flutter doctor -v output, pubspec.yaml and the current terminal path. The screenshots alone cannot distinguish a missing SDK from another project configuration problem.'
+  };
   c.workbench = {
     title: 'Quadri’s VS Code workbench',
-    intro: 'Follow this order, Quadri: read one mission, create its files, add its starter code, run the app, then prove the completion check. Paths below start at the assignment repository. After you open app/ as your VS Code folder, app/lib/main.dart appears as lib/main.dart in Explorer.',
+    intro: 'Start with START_HERE.md and its small checkpoints before using this reference. Paths below use app/ as the Flutter project folder. If your existing folder is flutter_application_1/, use it instead and do not create another project. Open that folder itself in VS Code so pubspec.yaml and lib/ are at the top of Explorer.',
     steps: [
       'Open VS Code. Choose File → Open Folder and select the extracted or cloned assignment folder containing assignment.md. Use View → Explorer to see the files.',
       'Press Ctrl+Shift+X. Install Flutter by Dart Code; its Dart dependency is installed with it. Install the Flutter SDK using the official instructions if the flutter command is unavailable, then restart VS Code.',
       'Choose Terminal → New Terminal. On Windows, use the terminal dropdown to select PowerShell. Run Get-Location and Get-ChildItem; confirm you are at the assignment root before creating app/.',
-      'Run the mission 01 setup commands once. If app/pubspec.yaml already exists, keep that project and skip flutter create. Do not create app/app/.',
+      'Run the mission 01 setup commands only if you do not have a Flutter project yet. If flutter_application_1/pubspec.yaml or app/pubspec.yaml already exists, keep that project, open its folder directly, and run flutter pub get there.',
       'After creation, choose File → Open Folder → app. This is your Flutter workspace. Open a fresh terminal: Get-Location should end in app, and Get-ChildItem pubspec.yaml should find the file.',
       'Use Explorer → New Folder / New File to create the exact paths in each mission. Right-click lib to create models, screens, widgets and services. Save files with Ctrl+S.',
       'Click the device name in the VS Code status bar and select Chrome. Press F5 to debug. If Chrome is unavailable, use flutter run -d web-server --web-port 7357 and open the printed address.',
@@ -19,7 +88,7 @@
     ],
     folderTree: 'app/\n├── .vscode/launch.json\n├── assets/images/pocket-pal-icon.png\n├── lib/\n│   ├── main.dart\n│   ├── models/pet.dart\n│   ├── screens/adoption_screen.dart\n│   ├── screens/game_screen.dart\n│   ├── services/pet_storage.dart\n│   ├── services/visible_pet_clock.dart\n│   └── widgets/pet_stat.dart\n├── test/pet_test.dart\n├── pubspec.yaml\n├── README.md\n└── TESTING.md',
     workflow: 'GameScreen is the single owner of the current Pet. AdoptionScreen sends a name and style to its parent. PetStat displays values and does not own a second copy. PetStorage saves snapshots. VisiblePetClock asks GameScreen to apply a tick; it never owns the pet.',
-    snippetNote: 'Code blocks labelled Complete file can be copied into the named file. Member fragments belong inside the stated class, not below its closing brace. Imports always go at the top. Widget fragments replace part of a build method. Complete helper files are also supplied in learning/snippets/. You still build GameScreen, wire the helpers together, finish Play and the action feedback, and write the remaining tests.'
+    snippetNote: 'Code blocks labelled Complete file can be copied into the named file. Member fragments belong inside the stated class, not below its closing brace. Imports go at the top. Widget fragments replace part of a build method. Reference helpers in learning/snippets/ end in .dart.txt so VS Code does not analyze them as source files. Copy their contents into the stated destination inside your Flutter project. Do not run the reference folder. Start with the one-file checkpoint before these longer helpers.'
   };
   c.codebaseFiles = [
     ['app/lib/main.dart', 'Starts MaterialApp. Begin with the mission 01 screen, then set home to GameScreen after creating it.'],
@@ -33,11 +102,11 @@
     ['app/TESTING.md', 'Record test command output and manual checks with actual results.']
   ];
   c.commonQuestions = [
-    ['Which folder should I edit?', 'Build the game in app/. The root README.html, guide/ and npm scripts belong to your assignment guide. Run Flutter commands from the directory containing app/pubspec.yaml.'],
+    ['Which folder should I edit?', 'Use the existing flutter_application_1/ folder shown in the screenshots. Open that folder itself in VS Code. app/ in this guide is a placeholder for your actual Flutter project folder. Edit lib/main.dart there and run Flutter commands beside its pubspec.yaml.'],
     ['flutter is not recognized', 'Install the Flutter SDK, add its bin directory to PATH using the official instructions, close all VS Code windows and reopen. Run flutter --version and flutter doctor in a new terminal.'],
     ['No pubspec.yaml file found', 'Run Get-Location and Get-ChildItem. If you are at the assignment root, run cd app. If your VS Code folder is already app/, do not run cd app again.'],
     ['What do I build first?', 'Run the mission 01 title screen. Build the adoption form next. Add the model and parent dashboard before wiring storage or the timer. Run again after each small change.'],
-    ['A snippet has red underlines', 'Read the first entry in View → Problems. Check that you created its prerequisite files and pasted class members inside the correct class. Do not paste a second set of imports into the middle of a file.'],
+    ['A snippet has red underlines', 'If the path is learning/snippets/, you are looking at a reference outside the Flutter project; open the actual app folder and copy only the required snippet to its destination. New references end in .dart.txt. If an error is in your app/lib/, run flutter pub get and read the first flutter analyze error.'],
     ['The generated widget test mentions MyApp', 'When you replace main.dart with PocketPalApp, update the generated test accordingly or replace that counter test with meaningful tests for your game. Do not leave a stale MyApp test failing.'],
     ['My pet resets on refresh', 'Use the same browser, hostname and port while testing. Run flutter run -d chrome --web-port 7357. Private browsing, clearing site data or changing the port changes/removes the available browser storage. Then check that you await load before showing the dashboard.'],
     ['Hot reload did not change the starting values', 'Hot reload preserves state. Use Hot Restart to rerun main/initState. A saved pet will still load its saved values; use your confirmed New pet action to create a fresh pet.'],
@@ -55,7 +124,7 @@
   const add = (id, extra) => Object.assign(byId(id), extra);
   add('setup', {
     code: 'Get-Location\nGet-ChildItem\nflutter doctor\nflutter devices\nflutter create --project-name pocket_pal --platforms=web app\ncd app\nflutter run -d chrome --web-port 7357',
-    editor: ['Open the assignment root in VS Code and its PowerShell terminal. Check app/ does not already contain pubspec.yaml before running flutter create.', 'After creation, open app/ with File → Open Folder. Open lib/main.dart and replace the generated counter app with the complete file below.', 'Create .vscode/launch.json inside app/. Select Pocket Pal (Chrome) in Run and Debug and press F5. Stop any terminal-launched run first.'],
+    editor: ['Existing project: open flutter_application_1/ (or your existing app folder) directly and run flutter pub get. Skip the create command below. New project only: run flutter create from the assignment root, then open app/.', 'Run the existing app once before changing files. Work through START_HERE.md checkpoint 1 if the full assignment feels too large. In the longer route, replace lib/main.dart with the mission file below after backing it up.', 'Create .vscode/launch.json inside the actual Flutter folder. Select Pocket Pal (Chrome) in Run and Debug and press F5. Stop any terminal-launched run first.'],
     files: ['app/lib/main.dart', 'app/.vscode/launch.json'],
     snippets: [
       { id: 'first-screen', title: 'Your first runnable screen', file: 'app/lib/main.dart', placement: 'Complete file. Replace the generated main.dart for this mission.', language: 'dart', filename: 'first_screen.dart', code: `import 'package:flutter/material.dart';

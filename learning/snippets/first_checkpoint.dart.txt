@@ -1,0 +1,44 @@
+import 'package:flutter/material.dart';
+
+void main() => runApp(const MaterialApp(home: FirstPetScreen()));
+
+class FirstPetScreen extends StatefulWidget {
+  const FirstPetScreen({super.key});
+
+  @override
+  State<FirstPetScreen> createState() => _FirstPetScreenState();
+}
+
+class _FirstPetScreenState extends State<FirstPetScreen> {
+  int _hunger = 30;
+
+  void _feed() {
+    setState(() {
+      _hunger = (_hunger - 20).clamp(0, 100).toInt();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Quadri’s first Pocket Pal')),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('🌱', style: TextStyle(fontSize: 72)),
+            const Text('Sprout'),
+            Text('Hunger: $_hunger / 100'),
+            const Text('Lower hunger means a fuller pet.'),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: _hunger == 0 ? null : _feed,
+              child: const Text('Feed'),
+            ),
+            if (_hunger == 0) const Text('Sprout is full.'),
+          ],
+        ),
+      ),
+    );
+  }
+}

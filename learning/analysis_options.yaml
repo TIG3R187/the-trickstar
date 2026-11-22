@@ -1,0 +1,6 @@
+# This directory contains teaching references, not a Flutter package.
+# Exclude legacy .dart examples if an older local copy still exists here.
+# Real application code is analyzed by its own Flutter project configuration.
+analyzer:
+  exclude:
+    - '**/*.dart'

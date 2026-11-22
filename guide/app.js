@@ -78,7 +78,11 @@
   $('outcome-copy').textContent = c.outcome;
   $('scope-copy').textContent = c.scope;
   $('tools-copy').textContent = c.tools;
+  const recovery = document.createElement('div');
+  recovery.className = 'workshop-details';
+  recovery.innerHTML = `<h3 class="font-bold">Start here: recover your existing Flutter project</h3><p>${escape(c.beginner.diagnosis)}</p><ol class="workbench-steps">${c.beginner.recovery.map(step => `<li>${escape(step)}</li>`).join('')}</ol><p>${escape(c.beginner.pathNote)}</p><h3 class="font-bold mt-5">One checkpoint at a time</h3><ul class="workbench-steps">${c.beginner.checkpoints.map(([title, text]) => `<li><strong>${escape(title)}</strong> — ${escape(text)}</li>`).join('')}</ul><p><a href="START_HERE.md" class="text-button">Open the one-file exercise and recovery instructions →</a></p><details class="workshop-details"><summary>Checkpoint 1: one file and one Feed button</summary><p>${escape(c.beginner.starterNote)}</p><div class="code-block"><div class="code-top"><span>LIB/MAIN.DART</span><button class="copy-button" data-copy-block="first-checkpoint">Copy</button></div><pre id="first-checkpoint"><code>${escape(c.beginner.starter)}</code></pre></div></details></div>`;
   $('workbench-content').innerHTML = `<p class="section-intro">${escape(c.workbench.intro)}</p><ol class="workbench-steps">${c.workbench.steps.map(x => `<li>${escape(x)}</li>`).join('')}</ol><details class="workshop-details"><summary>Open the folder map and code ownership guide</summary><pre>${escape(c.workbench.folderTree)}</pre><p>${escape(c.workbench.workflow)}</p><p>${escape(c.workbench.snippetNote)}</p><ul>${c.codebaseFiles.map(([file, role]) => `<li><code>${escape(file)}</code> — ${escape(role)}</li>`).join('')}</ul></details>`;
+  $('workbench-content').prepend(recovery);
   $('question-list').innerHTML = c.commonQuestions.map(([q, a]) => `<details class="workshop-details"><summary>${escape(q)}</summary><p>${escape(a)}</p></details>`).join('');
   $('help-template').textContent = c.helpTemplate;
   $('quest-map').innerHTML = c.missions.map((m, i) => `<button class="map-stop" id="map-${m.id}" data-jump="${m.id}"><span class="map-number">${String(i + 1).padStart(2, '0')}</span><span>${escape(m.skill)}</span></button>`).join('');

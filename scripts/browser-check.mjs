@@ -26,7 +26,7 @@ try {
   await page.reload();
   await page.locator('#mission-setup').waitFor();
   assert.equal(await page.locator('.mission').count(), 10);
-  assert.equal(await page.locator('#workbench-content .workbench-steps li').count(), 10);
+  assert.equal(await page.locator('#workbench-content > ol.workbench-steps > li').count(), 10);
   assert.equal(await page.locator('.snippet').count(), 16);
   assert.equal(await page.locator('#question-list details').count(), 15);
   await page.locator('#mission-setup .snippet').first().locator('summary').click();

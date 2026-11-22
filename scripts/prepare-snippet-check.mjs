@@ -15,9 +15,29 @@ const files = {
 for (const [source, destination] of Object.entries(files)) {
   const target = path.join(root, destination);
   await fs.mkdir(path.dirname(target), { recursive: true });
-  const example = await fs.readFile(path.join('learning/snippets', source), 'utf8');
+  const example = await fs.readFile(path.join('learning/snippets', `${source}.txt`), 'utf8');
   await fs.writeFile(target, example.replaceAll('package:pocket_pal/', 'package:pocket_pal_snippet_check/'));
 }
+await fs.copyFile('learning/snippets/first_checkpoint.dart.txt', path.join(root, 'lib/first_checkpoint.dart'));
+await fs.writeFile(path.join(root, 'test/first_checkpoint_test.dart'), `import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:pocket_pal_snippet_check/first_checkpoint.dart';
+
+void main() {
+  testWidgets('beginner exercise feeds from 30 to 10 to 0 and disables Feed', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: FirstPetScreen()));
+    expect(find.text('Hunger: 30 / 100'), findsOneWidget);
+    await tester.tap(find.text('Feed'));
+    await tester.pump();
+    expect(find.text('Hunger: 10 / 100'), findsOneWidget);
+    await tester.tap(find.text('Feed'));
+    await tester.pump();
+    expect(find.text('Hunger: 0 / 100'), findsOneWidget);
+    expect(find.text('Sprout is full.'), findsOneWidget);
+    expect(tester.widget<FilledButton>(find.byType(FilledButton)).onPressed, isNull);
+  });
+}
+`);
 await fs.writeFile(path.join(root, 'test/widget_test.dart'), `import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pocket_pal_snippet_check/screens/adoption_screen.dart';

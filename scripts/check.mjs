@@ -75,7 +75,10 @@ for (const mission of c.missions) {
   assert(mission.editor?.length >= 3 && mission.files?.length > 0 && mission.snippets?.length > 0, `Walkthrough for ${mission.id}`);
   for (const snippet of mission.snippets) {
     assert(!snippetIds.has(snippet.id), `Unique snippet ID: ${snippet.id}`); snippetIds.add(snippet.id);
-    if (snippet.filename) assert.equal((await fs.readFile(`learning/snippets/${snippet.filename}`, 'utf8')).trimEnd(), snippet.code.trimEnd());
+    if (snippet.filename) {
+      const referenceName = snippet.filename.endsWith('.dart') ? `${snippet.filename}.txt` : snippet.filename;
+      assert.equal((await fs.readFile(`learning/snippets/${referenceName}`, 'utf8')).trimEnd(), snippet.code.trimEnd());
+    }
     if (snippet.language === 'json') JSON.parse(snippet.code);
   }
 }

@@ -14,6 +14,47 @@ const repo = 'https://github.com/TIG3R187/the-trickstar';
 const hostedGuide = 'https://tig3r187.github.io/the-trickstar/';
 const offlinePack = `${repo}/raw/refs/heads/main/Pocket-Pal-Quadri-Assignment.zip`;
 
+const startHere = `# ${c.beginner.title}
+
+Read this first. Keep the longer [assignment](assignment.md) as a reference while you complete one checkpoint at a time.
+
+## What the screenshots show
+
+${c.beginner.diagnosis}
+
+## Recover the existing project
+
+${c.beginner.recovery.map((step, i) => `${i + 1}. ${step}`).join('\n')}
+
+Run these commands only after opening the actual Flutter folder:
+
+${fenced(c.beginner.commands, 'powershell')}
+
+${c.beginner.pathNote}
+
+${c.beginner.gitNote}
+
+## An easier build order
+
+${c.beginner.checkpoints.map(([title, text]) => `### ${title}\n\n${text}`).join('\n\n')}
+
+## Checkpoint 1: one file and one button
+
+${c.beginner.starterNote}
+
+${fenced(c.beginner.starter, 'dart')}
+
+Expected result: hunger goes 30 → 10 → 0. At zero, Feed is disabled and “Sprout is full.” appears. Do not add other features until you can reproduce this and explain the handler.
+
+The original generated counter test refers to MyApp. If you use this exercise and run flutter test, update that test to pump MaterialApp(home: FirstPetScreen()) and check the Feed behaviour instead of the old counter. Do not use the later Pet model tests until you have created the Pet model.
+
+## If it still fails
+
+${c.beginner.help}
+
+Official references: [Flutter in VS Code](https://docs.flutter.dev/tools/vs-code), [Dart import diagnostic](https://dart.dev/tools/diagnostics/uri_does_not_exist).
+`;
+
 const workbench = `## ${c.workbench.title}
 
 ${c.workbench.intro}
@@ -145,6 +186,8 @@ const assignment = `# Pocket Pal — Quadri’s Flutter assignment
 
 [Quest hub](README.md) · [How to launch the interactive guide](README.md#launch-the-interactive-guide)
 
+**Start here, Quadri:** [Fix your workspace and try the one-file checkpoint](START_HERE.md). If your existing project is flutter_application_1/, keep it. Every app/ path below refers to your actual Flutter project folder. Follow one checkpoint at a time before using the full reference below.
+
 ${goal}
 ${workbench}
 ${rules}
@@ -196,6 +239,8 @@ const readme = `<p align="center">
 | Player | Your toolkit | Your finish line |
 | :--- | :--- | :--- |
 | **Quadri** · junior Flutter developer | Flutter, Dart, local storage and Git | Adopt → feed → play → sleep → refresh → same pet |
+
+**Having import errors or feeling stuck? Open [START_HERE.md](START_HERE.md) first.** It explains the screenshots, uses your existing flutter_application_1 project, and starts with one working Feed button. The missions below are the full reference to return to as you progress.
 
 ## Launch the interactive guide
 
@@ -309,11 +354,27 @@ ${resources}
 
 await fs.writeFile('assignment.md', assignment);
 await fs.writeFile('README.md', readme);
+await fs.writeFile('START_HERE.md', startHere);
 await fs.mkdir('learning/snippets', { recursive: true });
 for (const mission of c.missions) {
   for (const snippet of mission.snippets) {
-    if (snippet.filename) await fs.writeFile(`learning/snippets/${snippet.filename}`, snippet.code + '\n');
+    if (!snippet.filename) continue;
+    const referenceName = snippet.filename.endsWith('.dart') ? `${snippet.filename}.txt` : snippet.filename;
+    if (referenceName !== snippet.filename) {
+      // Preserve any learner edits; migrate only an unchanged generated example.
+      const legacy = `learning/snippets/${snippet.filename}`;
+      try {
+        const previous = await fs.readFile(legacy, 'utf8');
+        if (previous.trimEnd() === snippet.code.trimEnd()) {
+          await fs.rename(legacy, `learning/snippets/${referenceName}`);
+        } else {
+          console.warn(`Kept edited reference ${legacy}. It is excluded from reference-folder analysis.`);
+        }
+      } catch (error) { if (error.code !== 'ENOENT') throw error; }
+    }
+    await fs.writeFile(`learning/snippets/${referenceName}`, snippet.code + '\n');
   }
 }
-await fs.writeFile('learning/README.md', '# Quadri’s snippet library\n\nThese are complete helper examples from the assignment. Copy each file into the destination stated in its mission; filenames here are references, not an assembled Flutter app. Start with assignment.md → Quadri’s VS Code workbench, then follow the ten missions in order.\n\nfirst_screen.dart becomes app/lib/main.dart for mission 01. Copy pet.dart into app/lib/models/, adoption_screen.dart into app/lib/screens/, pet_stat.dart into app/lib/widgets/, and storage/clock helpers into app/lib/services/. Put pet_test.dart in app/test/. launch.json belongs in app/.vscode/; firebase.json belongs in app/ after Firebase initialization.\n\nQuadri still builds GameScreen, integrates adoption/loading/reset, implements Play and visual mood feedback, and writes the widget journey test. Imports and paths are intended for those destination folders. Edit guide/workshop.js and rebuild to change these generated examples.\n');
+await fs.writeFile('learning/snippets/first_checkpoint.dart.txt', c.beginner.starter + '\n');
+await fs.writeFile('learning/README.md', '# Quadri’s reference library\n\nStart with [START_HERE.md](../START_HERE.md). Keep one Flutter project, open its own folder in VS Code, and complete the small checkpoints before the full missions.\n\nDart reference files end in .dart.txt intentionally. They are readable examples rather than files to run in this folder. Copy only the required contents into the destination named by the mission, using a real .dart filename there. This prevents missing Flutter imports in a reference directory that has no Flutter pubspec.yaml. Do not install Flutter dependencies in learning/.\n\nfirst_checkpoint.dart.txt goes into your existing lib/main.dart only after backing it up. first_screen.dart.txt is the alternative mission 01 greeting screen; choose one route, not both. Later, pet.dart.txt goes into lib/models/pet.dart, adoption_screen.dart.txt and game_screen.dart.txt into lib/screens/, pet_stat.dart.txt into lib/widgets/, and storage/clock examples into lib/services/. pet_test.dart.txt goes into test/pet_test.dart after the model exists.\n\nThe guide uses app/ as the project folder; if yours is flutter_application_1/, use that folder. Read name: in its pubspec.yaml before copying package:pocket_pal/... imports in tests and adapt those to your actual package name. Keep package:flutter/... imports unchanged. launch.json belongs in the actual project’s .vscode/ folder and firebase.json beside its pubspec.yaml during deployment.\n\nEdit guide/workshop.js and rebuild to update these generated references. Your own application code belongs in your Flutter project and keeps its normal analysis enabled.\n');
 console.log('Generated the assignment and animated GitHub quest hub from shared content.');

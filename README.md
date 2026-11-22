@@ -18,6 +18,8 @@
 | :--- | :--- | :--- |
 | **Quadri** · junior Flutter developer | Flutter, Dart, local storage and Git | Adopt → feed → play → sleep → refresh → same pet |
 
+**Having import errors or feeling stuck? Open [START_HERE.md](START_HERE.md) first.** It explains the screenshots, uses your existing flutter_application_1 project, and starts with one working Feed button. The missions below are the full reference to return to as you progress.
+
 ## Launch the interactive guide
 
 **Choose a launch route below.** This README is the animated GitHub edition. The interactive guide runs in a browser, where the pet reacts to your clicks and your mission progress is saved.
@@ -81,12 +83,12 @@ The Tailwind HTML guide is a reference and rules playground. Your submitted game
 
 ## Quadri’s VS Code workbench
 
-Follow this order, Quadri: read one mission, create its files, add its starter code, run the app, then prove the completion check. Paths below start at the assignment repository. After you open app/ as your VS Code folder, app/lib/main.dart appears as lib/main.dart in Explorer.
+Start with START_HERE.md and its small checkpoints before using this reference. Paths below use app/ as the Flutter project folder. If your existing folder is flutter_application_1/, use it instead and do not create another project. Open that folder itself in VS Code so pubspec.yaml and lib/ are at the top of Explorer.
 
 1. Open VS Code. Choose File → Open Folder and select the extracted or cloned assignment folder containing assignment.md. Use View → Explorer to see the files.
 2. Press Ctrl+Shift+X. Install Flutter by Dart Code; its Dart dependency is installed with it. Install the Flutter SDK using the official instructions if the flutter command is unavailable, then restart VS Code.
 3. Choose Terminal → New Terminal. On Windows, use the terminal dropdown to select PowerShell. Run Get-Location and Get-ChildItem; confirm you are at the assignment root before creating app/.
-4. Run the mission 01 setup commands once. If app/pubspec.yaml already exists, keep that project and skip flutter create. Do not create app/app/.
+4. Run the mission 01 setup commands only if you do not have a Flutter project yet. If flutter_application_1/pubspec.yaml or app/pubspec.yaml already exists, keep that project, open its folder directly, and run flutter pub get there.
 5. After creation, choose File → Open Folder → app. This is your Flutter workspace. Open a fresh terminal: Get-Location should end in app, and Get-ChildItem pubspec.yaml should find the file.
 6. Use Explorer → New Folder / New File to create the exact paths in each mission. Right-click lib to create models, screens, widgets and services. Save files with Ctrl+S.
 7. Click the device name in the VS Code status bar and select Chrome. Press F5 to debug. If Chrome is unavailable, use flutter run -d web-server --web-port 7357 and open the printed address.
@@ -128,7 +130,7 @@ app/
 
 **How the pieces connect:** GameScreen is the single owner of the current Pet. AdoptionScreen sends a name and style to its parent. PetStat displays values and does not own a second copy. PetStorage saves snapshots. VisiblePetClock asks GameScreen to apply a tick; it never owns the pet.
 
-**How to use the snippets:** Code blocks labelled Complete file can be copied into the named file. Member fragments belong inside the stated class, not below its closing brace. Imports always go at the top. Widget fragments replace part of a build method. Complete helper files are also supplied in learning/snippets/. You still build GameScreen, wire the helpers together, finish Play and the action feedback, and write the remaining tests.
+**How to use the snippets:** Code blocks labelled Complete file can be copied into the named file. Member fragments belong inside the stated class, not below its closing brace. Imports go at the top. Widget fragments replace part of a build method. Reference helpers in learning/snippets/ end in .dart.txt so VS Code does not analyze them as source files. Copy their contents into the stated destination inside your Flutter project. Do not run the reference folder. Start with the one-file checkpoint before these longer helpers.
 
 </details>
 
@@ -178,9 +180,9 @@ Run from the assignment root. After cd app, stay in app/ for Flutter commands.
 
 **In VS Code:**
 
-1. Open the assignment root in VS Code and its PowerShell terminal. Check app/ does not already contain pubspec.yaml before running flutter create.
-2. After creation, open app/ with File → Open Folder. Open lib/main.dart and replace the generated counter app with the complete file below.
-3. Create .vscode/launch.json inside app/. Select Pocket Pal (Chrome) in Run and Debug and press F5. Stop any terminal-launched run first.
+1. Existing project: open flutter_application_1/ (or your existing app folder) directly and run flutter pub get. Skip the create command below. New project only: run flutter create from the assignment root, then open app/.
+2. Run the existing app once before changing files. Work through START_HERE.md checkpoint 1 if the full assignment feels too large. In the longer route, replace lib/main.dart with the mission file below after backing it up.
+3. Create .vscode/launch.json inside the actual Flutter folder. Select Pocket Pal (Chrome) in Run and Debug and press F5. Stop any terminal-launched run first.
 
 **Files to work on:** `app/lib/main.dart`, `app/.vscode/launch.json`
 
@@ -1088,7 +1090,7 @@ Deploy with firebase deploy --only hosting after flutter build web --release. Pu
 <details>
 <summary><strong>Which folder should I edit?</strong></summary>
 
-Build the game in app/. The root README.html, guide/ and npm scripts belong to your assignment guide. Run Flutter commands from the directory containing app/pubspec.yaml.
+Use the existing flutter_application_1/ folder shown in the screenshots. Open that folder itself in VS Code. app/ in this guide is a placeholder for your actual Flutter project folder. Edit lib/main.dart there and run Flutter commands beside its pubspec.yaml.
 
 </details>
 
@@ -1116,7 +1118,7 @@ Run the mission 01 title screen. Build the adoption form next. Add the model and
 <details>
 <summary><strong>A snippet has red underlines</strong></summary>
 
-Read the first entry in View → Problems. Check that you created its prerequisite files and pasted class members inside the correct class. Do not paste a second set of imports into the middle of a file.
+If the path is learning/snippets/, you are looking at a reference outside the Flutter project; open the actual app folder and copy only the required snippet to its destination. New references end in .dart.txt. If an error is in your app/lib/, run flutter pub get and read the first flutter analyze error.
 
 </details>
 

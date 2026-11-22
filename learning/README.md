@@ -1,7 +1,11 @@
-# Quadri’s snippet library
+# Quadri’s reference library
 
-These are complete helper examples from the assignment. Copy each file into the destination stated in its mission; filenames here are references, not an assembled Flutter app. Start with assignment.md → Quadri’s VS Code workbench, then follow the ten missions in order.
+Start with [START_HERE.md](../START_HERE.md). Keep one Flutter project, open its own folder in VS Code, and complete the small checkpoints before the full missions.
 
-first_screen.dart becomes app/lib/main.dart for mission 01. Copy pet.dart into app/lib/models/, adoption_screen.dart into app/lib/screens/, pet_stat.dart into app/lib/widgets/, and storage/clock helpers into app/lib/services/. Put pet_test.dart in app/test/. launch.json belongs in app/.vscode/; firebase.json belongs in app/ after Firebase initialization.
+Dart reference files end in .dart.txt intentionally. They are readable examples rather than files to run in this folder. Copy only the required contents into the destination named by the mission, using a real .dart filename there. This prevents missing Flutter imports in a reference directory that has no Flutter pubspec.yaml. Do not install Flutter dependencies in learning/.
 
-Quadri still builds GameScreen, integrates adoption/loading/reset, implements Play and visual mood feedback, and writes the widget journey test. Imports and paths are intended for those destination folders. Edit guide/workshop.js and rebuild to change these generated examples.
+first_checkpoint.dart.txt goes into your existing lib/main.dart only after backing it up. first_screen.dart.txt is the alternative mission 01 greeting screen; choose one route, not both. Later, pet.dart.txt goes into lib/models/pet.dart, adoption_screen.dart.txt and game_screen.dart.txt into lib/screens/, pet_stat.dart.txt into lib/widgets/, and storage/clock examples into lib/services/. pet_test.dart.txt goes into test/pet_test.dart after the model exists.
+
+The guide uses app/ as the project folder; if yours is flutter_application_1/, use that folder. Read name: in its pubspec.yaml before copying package:pocket_pal/... imports in tests and adapt those to your actual package name. Keep package:flutter/... imports unchanged. launch.json belongs in the actual project’s .vscode/ folder and firebase.json beside its pubspec.yaml during deployment.
+
+Edit guide/workshop.js and rebuild to update these generated references. Your own application code belongs in your Flutter project and keeps its normal analysis enabled.
